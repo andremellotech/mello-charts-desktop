@@ -31,7 +31,7 @@ O Mello Charts Desktop é um suplemento gratuito e de código aberto para PowerP
 
 ## Navegação
 
-[Requisitos](#requisitos) · [Instalação](#instalação) · [Primeiro gráfico](#seu-primeiro-gráfico) · [Modelos](#modelos-disponíveis) · [Edição](#editar-e-personalizar) · [Dados](#dados-e-importação) · [Perguntas frequentes](#perguntas-frequentes) · [Desenvolvimento](#desenvolvimento)
+[Requisitos](#requisitos) · [Instalação](#instalação) · [Primeiro gráfico](#seu-primeiro-gráfico) · [Modelos](#modelos-disponíveis) · [Qual gráfico escolher](#qual-gráfico-escolher) · [Edição](#editar-e-personalizar) · [Dados](#dados-e-importação) · [Perguntas frequentes](#perguntas-frequentes) · [Desenvolvimento](#desenvolvimento)
 
 ## Requisitos
 
@@ -119,6 +119,37 @@ A remoção foi projetada para excluir somente os arquivos e registros próprios
 - **Baseline:** referência de comparação; não entra na soma do EAC.
 
 Todos os exemplos do repositório usam **dados fictícios**.
+
+### Qual gráfico escolher?
+
+Comece pela pergunta que a apresentação precisa responder:
+
+| O que você quer mostrar? | Modelo indicado |
+| --- | --- |
+| Quanto foi executado e quanto ainda falta | **Build-up** |
+| O que explica a mudança entre o início e o fim | **Cascata** |
+| Comparação de valores entre categorias | **Comparativo** |
+| Comparação de categorias com nomes longos | **Barras horizontais** |
+| Evolução dos valores ao longo do tempo | **Linhas** |
+| Comparação de áreas sobrepostas de realizado e projetado | **Área comparativa** |
+| Composição de um total | **Pizza** ou **Rosca** |
+| Composição percentual de cada categoria | **Empilhado 100%** |
+| Categorias que concentram a maior parte do valor | **Pareto** |
+| Duas séries representadas por colunas e linha | **Colunas + linha** |
+
+**Cuidados na leitura:**
+
+- Em **Linhas**, organize as categorias na sequência temporal.
+- Na **Área comparativa**, as áreas ficam sobrepostas, sem somar as séries.
+- No **Empilhado 100%**, categorias com totais diferentes podem apresentar proporções iguais.
+- Em **Colunas + linha**, as séries compartilham a mesma unidade e escala.
+- No **Pareto**, a curva mostra o percentual acumulado e a referência de 80% é fixa.
+- Em **Pizza** e **Rosca**, use valores não negativos e total positivo.
+
+> [!TIP]
+> **Projetado restante não é o total previsto.**
+> Se o total previsto é 100 e o realizado é 60, informe **40** como projetado restante. Assim, o EAC será **60 + 40 = 100**.
+> Informar 100 como restante produziria um EAC de 160.
 
 ### Exemplos para explorar
 
