@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "type": "buildup",
+  "title": "Composição do investimento",
+  "subtitle": "Realizado e saldo projetado por frente de trabalho",
+  "source": "Exemplo com dados fictícios",
+  "unit": "R$ mil",
+  "palette": "ocean",
+  "decimals": 0,
+  "showLabels": true,
+  "showBaseline": true,
+  "includeTotal": true,
+  "rows": [
+    {
+      "label": "Engenharia",
+      "actual": 320,
+      "forecast": 180,
+      "baseline": 480
+    },
+    {
+      "label": "Infraestrutura",
+      "actual": 450,
+      "forecast": 250,
+      "baseline": 660
+    },
+    {
+      "label": "Equipamentos",
+      "actual": 260,
+      "forecast": 210,
+      "baseline": 460
+    },
+    {
+      "label": "Implantação",
+      "actual": 130,
+      "forecast": 80,
+      "baseline": 200
+    }
+  ]
+}

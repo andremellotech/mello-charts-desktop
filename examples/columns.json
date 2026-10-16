@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "type": "columns",
+  "title": "Desempenho por período",
+  "subtitle": "Comparação entre realizado, projeção e baseline",
+  "source": "Exemplo com dados fictícios",
+  "unit": "R$ mil",
+  "palette": "ocean",
+  "decimals": 0,
+  "showLabels": true,
+  "showBaseline": true,
+  "includeTotal": true,
+  "rows": [
+    {
+      "label": "Janeiro",
+      "actual": 180,
+      "forecast": 210,
+      "baseline": 200
+    },
+    {
+      "label": "Fevereiro",
+      "actual": 240,
+      "forecast": 250,
+      "baseline": 230
+    },
+    {
+      "label": "Março",
+      "actual": 280,
+      "forecast": 270,
+      "baseline": 260
+    },
+    {
+      "label": "Abril",
+      "actual": 310,
+      "forecast": 320,
+      "baseline": 300
+    }
+  ]
+}

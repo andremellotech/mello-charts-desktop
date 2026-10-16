@@ -1,0 +1,46 @@
+MELLO CHARTS DESKTOP 0.5.0 - VERSAO EXPERIMENTAL
+
+PARA INSTALAR
+1. Salve seus documentos e feche o PowerPoint.
+2. Abra release/MelloCharts-Setup.exe.
+3. Clique em Instalar.
+4. Abra o PowerPoint desktop para Windows.
+5. Procure a aba Mello Charts e escolha um grafico.
+
+APARENCIA
+Escolha Executivo, Essencial ou Escuro no painel lateral.
+Ajuste paleta, valores, baseline e linhas auxiliares.
+Exportar PNG salva em 1920 x 1080. Inserir no slide cria formas editaveis.
+Os projetos prontos estao em examples/gallery (JSON para abrir no editor).
+
+INTEGRACAO
+O editor permite navegar no PowerPoint e mantem o slide de origem como destino.
+Use Duplicar grafico, Ajustar ao slide e Diagnostico na aba Mello Charts.
+O instalador tem o botao Verificar, que nao altera a instalacao.
+Se uma janela do host for fechada, o ultimo estado valido pendente pode ser
+recuperado pelo botao Recuperar rascunho do editor. Salve tambem seu JSON.
+
+PARA EDITAR
+Preencha a tabela ou use Colar do Excel/Importar tabela.
+Clique em Inserir no slide. Para alterar depois, selecione o grupo
+ou uma barra/texto dele e use Editar dados na aba Mello Charts.
+Salve sua apresentacao e guarde um projeto JSON de backup.
+
+REQUISITOS
+Windows 10/11 Intel/AMD, .NET Framework 4.8, PowerPoint desktop 32/64 bits.
+O instalador nao tem assinatura digital comercial. Em computadores
+corporativos, a instalacao pode depender de aprovacao da TI.
+
+TESTES
+52 testes do nucleo, 25 verificacoes da ponte e 21 testes de integracao passaram.
+A ativacao dentro de um PowerPoint real ainda precisa ser conferida.
+O teste automatico de Office foi bloqueado por permissao deste ambiente.
+O instalador nao foi executado para registrar componentes neste computador.
+
+REMOVER
+Feche o PowerPoint. Use Remover no instalador ou Configuracoes do Windows,
+Aplicativos, Mello Charts Desktop, Desinstalar.
+
+Documentacao completa: README.md e docs/install-guide.md.
+Codigo proprio sob licenca MIT. Nenhuma chave de licenca e necessaria
+para o Mello Charts. Nao inclui o software think-cell.
