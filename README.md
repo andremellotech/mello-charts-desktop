@@ -2,7 +2,7 @@
 
 Suplemento gratuito para criar gráficos financeiros no **PowerPoint para Windows**, com dados em tabela, prévia visual e formas editáveis no slide.
 
-**[Baixar instalador](release/MelloCharts-Setup.exe) · [Como instalar](docs/install-guide.md) · [Guia de uso](docs/native-integration.md) · [Exemplos](examples/gallery)**
+**[Baixar instalador](https://github.com/andremellotech/mello-charts-desktop/raw/refs/tags/v0.5.0/release/MelloCharts-Setup.exe) · [Como instalar](docs/install-guide.md) · [Guia de uso](docs/native-integration.md) · [Exemplos](examples/gallery)**
 
 ![Build-up de investimento por frente de trabalho, com realizado, projetado restante e total](examples/gallery/buildup-executivo.png)
 
@@ -20,7 +20,7 @@ No build-up, **EAC = realizado + projetado restante**. O baseline é uma referê
 
 ## Instalar e começar
 
-1. Baixe [MelloCharts-Setup.exe](release/MelloCharts-Setup.exe). Na página do arquivo, use **Download raw file**. Você também pode baixar os arquivos publicados na seção **Releases**.
+1. Baixe [MelloCharts-Setup.exe](https://github.com/andremellotech/mello-charts-desktop/raw/refs/tags/v0.5.0/release/MelloCharts-Setup.exe). O download usa a versão congelada `v0.5.0`. Consulte também as [notas da versão experimental](https://github.com/andremellotech/mello-charts-desktop/releases/tag/v0.5.0).
 2. Salve os documentos e **feche todas as janelas do PowerPoint**.
 3. Abra o instalador e clique em **Instalar**. Para atualizar, use o mesmo procedimento.
 4. Abra o PowerPoint desktop, selecione um slide em exibição **Normal** e procure a aba **Mello Charts**.
