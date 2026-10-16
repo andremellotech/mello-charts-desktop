@@ -1,5 +1,17 @@
 # Histórico
 
+## 0.6.0 experimental
+
+- Catálogo ampliado de 3 para 11 modelos: barras horizontais, linhas, área comparativa, colunas + linha, empilhado 100%, pizza, rosca e Pareto.
+- Galeria nativa com miniaturas, navegação pelo teclado, duplo clique e rolagem em telas menores.
+- Rótulos diretos nas linhas, legendas coordenadas, baseline nas barras, total central na rosca e Pareto com acumulado e referência em 80%.
+- Elipses e polígonos fechados na prévia e na ponte PowerPoint, preservando edição como formas e metadados no grupo.
+- Tabela categoria/valor para pizza, rosca e Pareto; importação e exportação preservam os novos tipos.
+- Projetos anteriores compatíveis, mantendo o formato JSON de versão 1.
+- Correções de legenda, sobreposição de baseline e valores, eixos subnormais e fatias imperceptíveis.
+- Galeria com PNG, JSON e CSV dos 11 modelos e dados fictícios.
+- 183 verificações locais: 52 núcleo, 38 ponte, 45 novos gráficos, 27 editor/galeria e 21 integração. Ativação instalada e desenho real no Office continuam pendentes.
+
 ## 0.5.0 experimental
 
 - Editor vinculado ao PowerPoint, permitindo continuar navegando nos slides. Destino protegido por identidade da apresentação e ID do slide.

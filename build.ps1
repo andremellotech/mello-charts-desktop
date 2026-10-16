@@ -1,4 +1,4 @@
-param([switch]$RunTests,[switch]$RenderGallery)
+﻿param([switch]$RunTests,[switch]$RenderGallery)
 $ErrorActionPreference = 'Stop'
 $projectRoot = $PSScriptRoot
 $buildRoot = Join-Path $projectRoot 'build'
@@ -10,7 +10,7 @@ if (-not (Test-Path $compilerPath)) { throw 'Instale ou habilite o .NET Framewor
 New-Item -ItemType Directory -Force -Path $buildRoot, $releaseRoot | Out-Null
 $references = @('/r:System.dll','/r:System.Core.dll','/r:System.Drawing.dll','/r:System.Windows.Forms.dll','/r:System.Web.Extensions.dll','/r:System.Xml.dll','/r:System.Xml.Linq.dll','/r:System.IO.Compression.dll','/r:System.IO.Compression.FileSystem.dll','/r:Microsoft.CSharp.dll')
 $libraryPath = Join-Path $buildRoot 'MelloCharts.AddIn.dll'
-$sources = @('src/ChartCore.cs','src/EditorForm.cs','src/PowerPointAddIn.cs','src/NativeIntegration.cs','src/InstallationHealth.cs') | ForEach-Object { Join-Path $projectRoot $_ }
+$sources = @('src/ChartCore.cs','src/ChartCatalog.cs','src/AdvancedCharts.cs','src/ChartGalleryForm.cs','src/EditorForm.cs','src/PowerPointAddIn.cs','src/NativeIntegration.cs','src/InstallationHealth.cs') | ForEach-Object { Join-Path $projectRoot $_ }
 & $compilerPath /nologo /target:library /platform:anycpu /optimize+ "/out:$libraryPath" $references "/resource:$(Join-Path $projectRoot 'assets/icon.png'),MelloCharts.Icon.png" $sources
 if ($LASTEXITCODE -ne 0) { throw 'Falha ao compilar o suplemento.' }
 $setupPath = Join-Path $releaseRoot 'MelloCharts-Setup.exe'
@@ -27,6 +27,14 @@ if ($RunTests) {
   if ($LASTEXITCODE -ne 0) { throw 'Falha ao compilar testes da ponte.' }
   & $bridgeTestPath
   if ($LASTEXITCODE -ne 0) { throw 'Testes da ponte falharam.' }
+  foreach ($catalogTestName in @('ExtendedChartTests','EditorCatalogTests')) {
+    $catalogTestPath = Join-Path $buildRoot ($catalogTestName + '.exe')
+    $catalogTestSource = Join-Path $projectRoot ('tests/' + $catalogTestName + '.cs')
+    & $compilerPath /nologo /target:exe /platform:anycpu "/out:$catalogTestPath" $references "/r:$libraryPath" $catalogTestSource
+    if ($LASTEXITCODE -ne 0) { throw "Falha ao compilar $catalogTestName." }
+    & $catalogTestPath
+    if ($LASTEXITCODE -ne 0) { throw "$catalogTestName falhou." }
+  }
   $integrationTestPath = Join-Path $buildRoot 'IntegrationTests.exe'
   & $compilerPath /nologo /target:exe /platform:anycpu /main:IntegrationTests "/out:$integrationTestPath" $references "/r:$libraryPath" (Join-Path $projectRoot 'tests/BridgeTests.cs') (Join-Path $projectRoot 'tests/IntegrationTests.cs')
   if ($LASTEXITCODE -ne 0) { throw 'Falha ao compilar testes de integração.' }

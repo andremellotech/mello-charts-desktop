@@ -5,7 +5,7 @@
 1. Baixe `MelloCharts-Setup.exe` do pacote entregue ou da área Releases do repositório, quando publicada.
 2. Salve seus arquivos e feche todas as janelas do PowerPoint.
 3. Abra o instalador. Abrir a janela ainda não instala nem remove nada.
-4. Confira o produto **Mello Charts Desktop 0.5.0** e a pasta indicada.
+4. Confira o produto **Mello Charts Desktop 0.6.0** e a pasta indicada.
 5. Se desejar, clique em **Verificar** para conferir DLL e registros sem alterar nada. Clique em **Instalar** e aguarde a confirmação.
 6. Abra o PowerPoint desktop para Windows e uma apresentação.
 7. Procure a aba **Mello Charts** e crie um gráfico em um slide de teste.

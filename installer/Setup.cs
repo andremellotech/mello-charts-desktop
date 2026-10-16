@@ -1,4 +1,4 @@
-// Original per-user installer for Mello Charts Desktop. No add-in code is loaded here.
+﻿// Original per-user installer for Mello Charts Desktop. No add-in code is loaded here.
 // Build with the .NET Framework C# compiler and the MelloCharts.AddIn.dll resource.
 using System;
 using System.Collections.Generic;
@@ -16,8 +16,8 @@ using Microsoft.Win32;
 [assembly: AssemblyDescription("Instalador por usuário do Mello Charts Desktop")]
 [assembly: AssemblyCompany("Mello Charts")]
 [assembly: AssemblyProduct("Mello Charts Desktop")]
-[assembly: AssemblyVersion("0.5.0.0")]
-[assembly: AssemblyFileVersion("0.5.0.0")]
+[assembly: AssemblyVersion("0.6.0.0")]
+[assembly: AssemblyFileVersion("0.6.0.0")]
 [assembly: ComVisible(false)]
 
 namespace MelloCharts.Installer
@@ -68,8 +68,8 @@ namespace MelloCharts.Installer
     internal static class SetupConstants
     {
         internal const string ProductName = "Mello Charts Desktop";
-        internal const string DisplayVersion = "0.5.0";
-        internal const string AssemblyVersion = "0.5.0.0";
+        internal const string DisplayVersion = "0.6.0";
+        internal const string AssemblyVersion = "0.6.0.0";
         internal const string ProgId = "MelloCharts.Connect";
         internal const string ClassId = "{49607523-6CCF-4559-97E4-FCF5BE438C3A}";
         internal const string ManagedCategory = "{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}";
@@ -194,7 +194,7 @@ namespace MelloCharts.Installer
             BackColor = Color.White;
 
             Label heading = new Label();
-            heading.Text = "Mello Charts Desktop 0.5.0";
+            heading.Text = "Mello Charts Desktop 0.6.0";
             heading.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             heading.SetBounds(24, 20, 625, 40);
             Controls.Add(heading);
@@ -286,7 +286,7 @@ namespace MelloCharts.Installer
                     AssemblyName assembly = AssemblyName.GetAssemblyName(paths.Dll);
                     if (!String.Equals(assembly.Name, "MelloCharts.AddIn", StringComparison.Ordinal) ||
                         assembly.Version == null || assembly.Version.ToString() != SetupConstants.AssemblyVersion)
-                        throw new InvalidDataException("O suplemento embutido não corresponde ao MelloCharts.AddIn 0.5.0.0.");
+                        throw new InvalidDataException("O suplemento embutido não corresponde ao MelloCharts.AddIn 0.6.0.0.");
                     if (installerBytes != null) WriteKnownFile(paths, paths.Setup, installerBytes);
                     SetupConstants.RequirePowerPointClosed();
                     Log("Registrando o suplemento somente para este usuário...");
@@ -294,7 +294,7 @@ namespace MelloCharts.Installer
                     transaction.Commit();
                     Log("Instalação concluída. Abra o PowerPoint e procure a guia Mello Charts.");
                     Log("Para remover, use este instalador ou Aplicativos nas Configurações do Windows.");
-                    MessageBox.Show(this, "Mello Charts Desktop 0.5.0 instalado para este usuário.\r\n" +
+                    MessageBox.Show(this, "Mello Charts Desktop 0.6.0 instalado para este usuário.\r\n" +
                         "Abra o PowerPoint para usar o suplemento.", Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else

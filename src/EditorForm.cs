@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -83,43 +83,46 @@ namespace MelloCharts {
     private string SelectedPalette(){return palette.SelectedIndex==1?"forest":palette.SelectedIndex==2?"ink":"ocean";}
     private string SelectedStyle(){return style.SelectedIndex==1?"minimal":style.SelectedIndex==2?"dark":"executive";}
     private void PresentationTo(ChartDocument d){d.title=title.Text;d.subtitle=subtitle.Text;d.source=source.Text;d.unit=unit.Text;d.palette=SelectedPalette();d.style=SelectedStyle();d.compactNumbers=compact.Checked;d.showGrid=gridLines.Checked;d.decimals=Math.Max(0,decimals.SelectedIndex);d.showLabels=labels.Checked;d.showBaseline=baseline.Checked;d.includeTotal=total.Checked;}
-    private static string TypeName(string type){return type=="buildup"?"Build-up":type=="waterfall"?"Cascata":"Comparativo";}
+    private static string TypeName(string type){return ChartCatalog.Get(type).Name;}
     private static void Tool(FlowLayoutPanel p,string text,Action action){Button b=new Button{Text=text,AutoSize=true,Height=31,Padding=new Padding(8,2,8,2),FlatStyle=FlatStyle.Flat,BackColor=Color.White,Margin=new Padding(0,3,8,0)};b.FlatAppearance.BorderColor=Color.FromArgb(208,221,226);b.Click+=(s,e)=>action();p.Controls.Add(b);}
     private void SetStatus(string text,bool error){status.Text=text;status.ForeColor=error?Color.FromArgb(164,73,48):Color.FromArgb(67,97,111);}
     private void LoadDocument(){
-      loading=true;typeLabel.Text=TypeName(document.type).ToUpperInvariant();title.Text=document.title;title.MaxLength=80;subtitle.Text=document.subtitle;subtitle.MaxLength=110;source.Text=document.source;source.MaxLength=100;unit.Text=document.unit;unit.MaxLength=16;palette.SelectedIndex=document.palette=="forest"?1:document.palette=="ink"?2:0;decimals.SelectedIndex=document.decimals;style.SelectedIndex=document.style=="minimal"?1:document.style=="dark"?2:0;compact.Checked=document.compactNumbers;gridLines.Checked=document.showGrid;labels.Checked=document.showLabels;baseline.Checked=document.showBaseline;total.Checked=document.includeTotal;baseline.Visible=document.type!="waterfall";total.Visible=document.type=="buildup";
+      loading=true;ChartDefinition definition=ChartCatalog.Get(document.type);typeLabel.Text=TypeName(document.type).ToUpperInvariant();title.Text=document.title;title.MaxLength=80;subtitle.Text=document.subtitle;subtitle.MaxLength=110;source.Text=document.source;source.MaxLength=100;unit.Text=document.unit;unit.MaxLength=16;palette.SelectedIndex=document.palette=="forest"?1:document.palette=="ink"?2:0;decimals.SelectedIndex=document.decimals;style.SelectedIndex=document.style=="minimal"?1:document.style=="dark"?2:0;compact.Checked=document.compactNumbers;gridLines.Checked=document.showGrid;labels.Checked=document.showLabels;baseline.Checked=document.showBaseline;total.Checked=document.includeTotal;baseline.Visible=definition.Baseline;total.Visible=definition.Total;gridLines.Visible=document.type!="pie"&&document.type!="donut";
       grid.Columns.Clear();grid.Rows.Clear();grid.Columns.Add("label","Categoria");grid.Columns[0].FillWeight=180;
       if(document.type=="waterfall"){
         grid.Columns.Add("value","Valor");DataGridViewComboBoxColumn kind=new DataGridViewComboBoxColumn{Name="kind",HeaderText="Tipo",DataSource=new[]{"base","delta","total"}};grid.Columns.Add(kind);
         foreach(ChartRow r in document.rows)grid.Rows.Add(r.label,r.value.ToString("R",Pt),r.kind);
         grid.Rows[0].Cells["kind"].ReadOnly=true;
+      }else if(definition.SingleValue){
+        grid.Columns.Add("value","Valor");foreach(ChartRow r in document.rows)grid.Rows.Add(r.label,r.value.ToString("R",Pt));
       }else{
         grid.Columns.Add("actual","Realizado");grid.Columns.Add("forecast",document.type=="buildup"?"Projetado restante":"Projetado");grid.Columns.Add("baseline","Baseline");foreach(ChartRow r in document.rows)grid.Rows.Add(r.label,r.actual.ToString("R",Pt),r.forecast.ToString("R",Pt),r.baseline.ToString("R",Pt));
       }
-      method.Text=document.type=="buildup"?"EAC = realizado + projetado restante. Baseline não entra na soma.":document.type=="waterfall"?"base = início · delta = variação · total = acumulado automático.":"Realizado e projetado são séries independentes; baseline é referência.";loading=false;RefreshChart();
+      method.Text=definition.Method;tips.SetToolTip(method,definition.Method+"\nCabeçalho: "+definition.Header);tips.SetToolTip(grid,"Cole ou importe uma tabela com o cabeçalho: "+definition.Header);loading=false;RefreshChart();
     }
     private static double Number(object value){
       return ChartCore.ParseNumber(Convert.ToString(value,Pt));
     }
     private ChartDocument ReadEditor(){
       ChartDocument d=ChartCore.Clone(document);PresentationTo(d);d.rows.Clear();
-      foreach(DataGridViewRow row in grid.Rows){ChartRow r=new ChartRow{label=Convert.ToString(row.Cells["label"].Value)};if(d.type=="waterfall"){r.kind=Convert.ToString(row.Cells["kind"].Value);r.value=r.kind=="total"?0:Number(row.Cells["value"].Value);}else{r.actual=Number(row.Cells["actual"].Value);r.forecast=Number(row.Cells["forecast"].Value);r.baseline=Number(row.Cells["baseline"].Value);}d.rows.Add(r);}ChartCore.Validate(d);return d;
+      foreach(DataGridViewRow row in grid.Rows){ChartRow r=new ChartRow{label=Convert.ToString(row.Cells["label"].Value)};if(d.type=="waterfall"){r.kind=Convert.ToString(row.Cells["kind"].Value);r.value=r.kind=="total"?0:Number(row.Cells["value"].Value);}else if(ChartCatalog.Get(d.type).SingleValue){r.value=Number(row.Cells["value"].Value);}else{r.actual=Number(row.Cells["actual"].Value);r.forecast=Number(row.Cells["forecast"].Value);r.baseline=Number(row.Cells["baseline"].Value);}d.rows.Add(r);}ChartCore.Validate(d);return d;
     }
     private void RefreshChart(){if(loading)return;try{ChartDocument d=ReadEditor();preview.Scene=ChartCore.BuildScene(d);lastValidDocument=ChartCore.Clone(d);snapshotDirty=ChartCore.Serialize(d)!=savedState;valid=true;apply.Enabled=true;SetStatus((context==null?"Prévia atualizada":"Destino: slide "+context.SlideNumber)+" · "+d.rows.Count+" categorias · Unidade: "+d.unit,false);}catch(Exception ex){snapshotDirty=true;valid=false;apply.Enabled=false;preview.Scene=null;SetStatus(ex.Message,true);}preview.Invalidate();}
-    private void AddRow(){if(grid.Rows.Count>=12){SetStatus("Use até 12 categorias por gráfico.",true);return;}if(document.type=="waterfall"){int index=grid.Rows.Count;if(index>1&&Convert.ToString(grid.Rows[index-1].Cells["kind"].Value)=="total")index--;grid.Rows.Insert(index,new object[]{"Nova etapa","0","delta"});}else grid.Rows.Add("Nova categoria","0","0","0");RefreshChart();}
+    private void AddRow(){if(grid.Rows.Count>=12){SetStatus("Use até 12 categorias por gráfico.",true);return;}if(document.type=="waterfall"){int index=grid.Rows.Count;if(index>1&&Convert.ToString(grid.Rows[index-1].Cells["kind"].Value)=="total")index--;grid.Rows.Insert(index,new object[]{"Nova etapa","0","delta"});}else if(ChartCatalog.Get(document.type).SingleValue)grid.Rows.Add("Nova categoria","0");else grid.Rows.Add("Nova categoria","0","0","0");RefreshChart();}
     private void DeleteRow(){if(grid.CurrentCell==null)return;int index=grid.CurrentCell.RowIndex;if(grid.Rows.Count<=1||(document.type=="waterfall"&&index==0)){SetStatus("Mantenha a base inicial e pelo menos uma categoria.",true);return;}grid.Rows.RemoveAt(index);RefreshChart();}
     private void Import(){
       using(OpenFileDialog f=new OpenFileDialog{Filter="Tabelas CSV, TSV ou Excel|*.csv;*.tsv;*.txt;*.xlsx",Title="Importar tabela do gráfico"}){
         if(f.ShowDialog()!=DialogResult.OK)return;try{ChartDocument next=Path.GetExtension(f.FileName).Equals(".xlsx",StringComparison.OrdinalIgnoreCase)?ChartCore.ImportXlsx(f.FileName,document.type):ChartCore.ImportDelimited(ReadLimited(f.FileName,1000000),document.type);
-          PresentationTo(next);next.source="Dados importados pelo usuário";ChartCore.Validate(next);document=next;LoadDocument();
+          ImportData(next,"Dados importados pelo usuário");
         }catch(Exception ex){SetStatus(ex.Message,true);}
       }
     }
     private void PasteTable(){
-      try{if(!Clipboard.ContainsText())throw new InvalidOperationException("Copie uma tabela do Excel incluindo o cabeçalho categoria, realizado, projetado e baseline. Na cascata: categoria, valor e tipo.");
-        ChartDocument next=ChartCore.ImportDelimited(Clipboard.GetText(),document.type);PresentationTo(next);next.source="Dados colados pelo usuário";ChartCore.Validate(next);document=next;LoadDocument();
+      try{if(!Clipboard.ContainsText())throw new InvalidOperationException("Copie uma tabela incluindo o cabeçalho: "+ChartCatalog.Get(document.type).Header+".");
+        ChartDocument next=ChartCore.ImportDelimited(Clipboard.GetText(),document.type);ImportData(next,"Dados colados pelo usuário");
       }catch(Exception ex){SetStatus(ex.Message,true);}
     }
+    private void ImportData(ChartDocument next,string importedSource){PresentationTo(next);next.source=importedSource;ChartCore.Validate(next);document=next;LoadDocument();}
     private static string ReadLimited(string file,long limit){if(new FileInfo(file).Length>limit)throw new InvalidOperationException("O arquivo é maior que o limite permitido.");return File.ReadAllText(file,EncodingUtf8);}
     private static readonly System.Text.Encoding EncodingUtf8=new System.Text.UTF8Encoding(false,true);
     private void OpenProject(){OpenProjectAt(null);}
@@ -155,6 +158,12 @@ namespace MelloCharts {
         graphics.TranslateTransform(ox,oy);graphics.ScaleTransform(scale,scale);graphics.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.AntiAlias;graphics.TextRenderingHint=System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
         foreach(SceneElement s in scene.Elements){Color color=ColorTranslator.FromHtml(s.Color);
           if(s.Type=="rect"){using(Brush brush=new SolidBrush(color))graphics.FillRectangle(brush,(float)s.X,(float)s.Y,(float)s.W,(float)s.H);}
+          else if(s.Type=="ellipse"){using(Brush brush=new SolidBrush(color))graphics.FillEllipse(brush,(float)s.X,(float)s.Y,(float)s.W,(float)s.H);}
+          else if(s.Type=="polygon"){
+            if(s.Points==null||s.Points.Length<6||s.Points.Length%2!=0)throw new InvalidOperationException("Polígono inválido na cena do gráfico.");
+            PointF[] points=new PointF[s.Points.Length/2];for(int i=0;i<points.Length;i++)points[i]=new PointF((float)s.Points[i*2],(float)s.Points[i*2+1]);
+            using(Brush brush=new SolidBrush(color))graphics.FillPolygon(brush,points);
+          }
           else if(s.Type=="line"){using(Pen pen=new Pen(color,(float)Math.Max(.5,s.Size))){if(s.Dash)pen.DashStyle=System.Drawing.Drawing2D.DashStyle.Dash;graphics.DrawLine(pen,(float)s.X,(float)s.Y,(float)s.X2,(float)s.Y2);}}
           else{using(Font font=new Font("Arial",(float)s.Size,s.Bold?FontStyle.Bold:FontStyle.Regular,GraphicsUnit.Pixel))using(Brush brush=new SolidBrush(color))using(StringFormat f=new StringFormat()){f.Alignment=s.Align=="center"?StringAlignment.Center:s.Align=="right"?StringAlignment.Far:StringAlignment.Near;f.LineAlignment=StringAlignment.Near;graphics.DrawString(s.Text,font,brush,new RectangleF((float)s.X,(float)s.Y,(float)s.W,(float)s.H),f);}}
         }

@@ -1,16 +1,19 @@
-MELLO CHARTS DESKTOP 0.5.0 - VERSAO EXPERIMENTAL
+MELLO CHARTS DESKTOP 0.6.0 - VERSAO EXPERIMENTAL
 
 PARA INSTALAR
 1. Salve seus documentos e feche o PowerPoint.
 2. Abra release/MelloCharts-Setup.exe.
 3. Clique em Instalar.
 4. Abra o PowerPoint desktop para Windows.
-5. Procure a aba Mello Charts e escolha um grafico.
+5. Na aba Mello Charts, abra Galeria de graficos e clique em Usar modelo.
+11 tipos: build-up, cascata, comparativo, barras, linhas, area,
+colunas + linha, empilhado 100%, pizza, rosca e Pareto.
 
 APARENCIA
 Escolha Executivo, Essencial ou Escuro no painel lateral.
 Ajuste paleta, valores, baseline e linhas auxiliares.
 Exportar PNG salva em 1920 x 1080. Inserir no slide cria formas editaveis.
+Para a tabela, use Editar dados do Mello Charts, nao o grafico nativo do Office.
 Os projetos prontos estao em examples/gallery (JSON para abrir no editor).
 
 INTEGRACAO
@@ -32,7 +35,8 @@ O instalador nao tem assinatura digital comercial. Em computadores
 corporativos, a instalacao pode depender de aprovacao da TI.
 
 TESTES
-52 testes do nucleo, 25 verificacoes da ponte e 21 testes de integracao passaram.
+183 verificacoes passaram: 52 nucleo, 38 ponte, 45 novos graficos,
+27 editor/galeria e 21 integracao.
 A ativacao dentro de um PowerPoint real ainda precisa ser conferida.
 O teste automatico de Office foi bloqueado por permissao deste ambiente.
 O instalador nao foi executado para registrar componentes neste computador.

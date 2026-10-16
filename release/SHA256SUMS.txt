@@ -1,1 +1,1 @@
-a1ef58e0a55d287e209041043279d04652e4e4c8fb6848c87158bca3ca15b37e  MelloCharts-Setup.exe
+42654ad423bbc000fe37aa1e771d014db2fe58d50497abdd911d9db55496c085  MelloCharts-Setup.exe

@@ -3,7 +3,7 @@
 ## Instalar ou atualizar
 
 1. Salve os documentos e feche todas as janelas do PowerPoint.
-2. Abra `release/MelloCharts-Setup.exe` e confira a versão **0.5.0**.
+2. Abra `release/MelloCharts-Setup.exe` e confira a versão **0.6.0**.
 3. Clique em **Verificar** se quiser conferir a instalação atual. Essa opção só lê o estado local.
 4. Clique em **Instalar**. A atualização usa a mesma pasta e o mesmo usuário do Windows.
 5. Abra o PowerPoint desktop e procure a aba **Mello Charts**. Faça o primeiro ensaio em uma apresentação de teste.
@@ -12,11 +12,17 @@ O suplemento é COM para Windows, com DLL AnyCPU e editor WinForms. O instalador
 
 ## Trabalhar com o editor aberto
 
-Abra um dos três gráficos pela aba Mello Charts. O editor é uma janela vinculada ao PowerPoint e permite continuar navegando na apresentação. Ele mostra o número do slide em que foi aberto. A identidade do slide é mantida mesmo se você mudar a seleção.
+Na aba Mello Charts, abra **Galeria de gráficos**, selecione um dos 11 modelos e clique em **Usar modelo**. Os atalhos Build-up, Cascata e Comparativo continuam disponíveis. O editor é uma janela vinculada ao PowerPoint e permite continuar navegando na apresentação. Ele mostra o número do slide em que foi aberto. A identidade do slide é mantida mesmo se você mudar a seleção.
 
 **Inserir no slide** e **Atualizar gráfico** sempre usam esse destino de origem. Se outra apresentação estiver ativa, volte à original para aplicar. Se você excluir o slide ou fechar o arquivo original, salve seu JSON e abra um novo editor. O destino não é transferido automaticamente para outro arquivo.
 
 Há um editor por instância do suplemento. Abrir outro gráfico fecha o editor anterior, com confirmação se houver alterações não aplicadas nem salvas em JSON. O editor não altera a apresentação enquanto você apenas modifica a tabela ou a aparência.
+
+## Escolher o modelo
+
+Compare as miniaturas e confirme pelo botão ou dê duplo clique no cartão. A tabela e as opções mudam conforme o tipo: pizza, rosca e Pareto pedem categoria e valor; os comparativos usam realizado, projetado e baseline. Consulte o [guia visual](visual-guide.md).
+
+Os gráficos são grupos de formas e textos, incluindo elipses e polígonos. Use **Editar dados** do Mello Charts para a tabela. O comando de edição dos gráficos nativos do Office não é usado.
 
 ## Editar, copiar e ajustar
 
@@ -47,6 +53,6 @@ Se a aba não aparecer, veja **Arquivo → Opções → Suplementos → Gerencia
 
 ## Validação disponível
 
-O pacote passou por 98 verificações locais. A destruição da janela nativa foi reproduzida em uma janela invisível de teste, independente do Office. A ativação do suplemento instalado e o fluxo completo no PowerPoint real ainda não foram confirmados, conforme [Verificação](verification.md).
+O pacote passou por 183 verificações locais. A destruição da janela nativa foi reproduzida em uma janela invisível de teste, independente do Office. A ativação do suplemento instalado e o fluxo completo no PowerPoint real ainda não foram confirmados, conforme [Verificação](verification.md).
 
 Referências de API: [desfazer no PowerPoint](https://learn.microsoft.com/en-us/office/vba/api/powerpoint.application.startnewundoentry), [grupo pai de uma forma](https://learn.microsoft.com/en-us/office/vba/api/powerpoint.shape.parentgroup), [localização por ID do slide](https://learn.microsoft.com/en-us/office/vba/api/powerpoint.slides.findbyslideid) e [atualização da ribbon](https://learn.microsoft.com/en-us/office/vba/api/office.iribbonui.invalidate).

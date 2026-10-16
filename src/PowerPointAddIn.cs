@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -13,8 +13,8 @@ using System.Windows.Forms;
 [assembly:AssemblyCompany("Mello Charts")]
 [assembly:AssemblyProduct("Mello Charts")]
 [assembly:AssemblyCopyright("Copyright 2026 André Mello")]
-[assembly:AssemblyVersion("0.5.0.0")]
-[assembly:AssemblyFileVersion("0.5.0.0")]
+[assembly:AssemblyVersion("0.6.0.0")]
+[assembly:AssemblyFileVersion("0.6.0.0")]
 [assembly:ComVisible(false)]
 
 namespace MelloCharts {
@@ -42,13 +42,20 @@ namespace MelloCharts {
     private void RefreshRibbon(){if(ribbon==null)return;string next=CanCreate(null)+"/"+CanEdit(null);if(next==ribbonState)return;try{dynamic ui=ribbon;ui.Invalidate();ribbonState=next;}catch{}}
     public bool CanCreate(object control){try{PowerPointBridge.CurrentSlide(application);return true;}catch{return false;}}
     public bool CanEdit(object control){try{PowerPointBridge.Selected(application);return true;}catch{return false;}}
-    public string GetCustomUI(string ribbonId){return @"<customUI xmlns='http://schemas.microsoft.com/office/2009/07/customui' onLoad='OnRibbonLoad'><ribbon><tabs><tab id='MelloCharts.Tab' label='Mello Charts'><group id='MelloCharts.Create' label='Novo gráfico'><button id='MelloCharts.Build' label='Build-up' size='large' getImage='GetImage' getEnabled='CanCreate' onAction='NewBuildUp' screentip='Realizado + projetado restante' supertip='Duas parcelas na mesma coluna, baseline de referência e total opcional.'/><button id='MelloCharts.Waterfall' label='Cascata' size='large' getImage='GetImage' getEnabled='CanCreate' onAction='NewWaterfall' screentip='Origem das variações' supertip='Base, variações positivas e negativas, subtotais e total.'/><button id='MelloCharts.Columns' label='Comparativo' size='large' getImage='GetImage' getEnabled='CanCreate' onAction='NewColumns' screentip='Comparar séries' supertip='Realizado e projetado em colunas, com baseline opcional.'/></group><group id='MelloCharts.Edit' label='Gráfico selecionado'><button id='MelloCharts.EditSelected' label='Editar dados' size='large' getImage='GetImage' getEnabled='CanEdit' onAction='EditSelected' supertip='Selecione o gráfico ou um elemento dele para recuperar seus dados.'/><button id='MelloCharts.Duplicate' label='Duplicar gráfico' getImage='GetImage' getEnabled='CanEdit' onAction='DuplicateChart' supertip='Cria outra cópia editável, mantendo o original.'/><button id='MelloCharts.Fit' label='Ajustar ao slide' getImage='GetImage' getEnabled='CanEdit' onAction='FitChart' supertip='Centraliza e ajusta ao tamanho do slide em proporção 16:9. Remove a rotação.'/></group><group id='MelloCharts.Support' label='Suporte'><button id='MelloCharts.Diagnostics' label='Diagnóstico' getImage='GetImage' onAction='ShowDiagnostics'/><button id='MelloCharts.Help' label='Como usar' getImage='GetImage' onAction='ShowHelp'/></group></tab></tabs></ribbon></customUI>";}
+    public string GetCustomUI(string ribbonId){return @"<customUI xmlns='http://schemas.microsoft.com/office/2009/07/customui' onLoad='OnRibbonLoad'><ribbon><tabs><tab id='MelloCharts.Tab' label='Mello Charts'><group id='MelloCharts.Create' label='Novo gráfico'><button id='MelloCharts.Gallery' label='Galeria de gráficos' size='large' getImage='GetImage' getEnabled='CanCreate' onAction='NewGallery' screentip='Explore todos os gráficos' supertip='Escolha um gráfico por objetivo e abra um exemplo editável.'/><button id='MelloCharts.Build' label='Build-up' size='large' getImage='GetImage' getEnabled='CanCreate' onAction='NewBuildUp' screentip='Realizado + projetado restante' supertip='Duas parcelas na mesma coluna, baseline de referência e total opcional.'/><button id='MelloCharts.Waterfall' label='Cascata' size='large' getImage='GetImage' getEnabled='CanCreate' onAction='NewWaterfall' screentip='Origem das variações' supertip='Base, variações positivas e negativas, subtotais e total.'/><button id='MelloCharts.Columns' label='Comparativo' size='large' getImage='GetImage' getEnabled='CanCreate' onAction='NewColumns' screentip='Comparar séries' supertip='Realizado e projetado em colunas, com baseline opcional.'/></group><group id='MelloCharts.Edit' label='Gráfico selecionado'><button id='MelloCharts.EditSelected' label='Editar dados' size='large' getImage='GetImage' getEnabled='CanEdit' onAction='EditSelected' supertip='Selecione o gráfico ou um elemento dele para recuperar seus dados.'/><button id='MelloCharts.Duplicate' label='Duplicar gráfico' getImage='GetImage' getEnabled='CanEdit' onAction='DuplicateChart' supertip='Cria outra cópia editável, mantendo o original.'/><button id='MelloCharts.Fit' label='Ajustar ao slide' getImage='GetImage' getEnabled='CanEdit' onAction='FitChart' supertip='Centraliza e ajusta ao tamanho do slide em proporção 16:9. Remove a rotação.'/></group><group id='MelloCharts.Support' label='Suporte'><button id='MelloCharts.Diagnostics' label='Diagnóstico' getImage='GetImage' onAction='ShowDiagnostics'/><button id='MelloCharts.Help' label='Como usar' getImage='GetImage' onAction='ShowHelp'/></group></tab></tabs></ribbon></customUI>";}
     public object GetImage(object control){
       string id="Help";try{dynamic c=control;id=(string)c.Id;}catch{}object icon;if(icons.TryGetValue(id,out icon))return icon;using(Bitmap image=RibbonIcons.Create(id))icon=PictureHost.Convert(image);icons[id]=icon;return icon;
     }
     public void NewBuildUp(object control){Open("buildup",false);}
     public void NewWaterfall(object control){Open("waterfall",false);}
     public void NewColumns(object control){Open("columns",false);}
+    public void NewGallery(object control){
+      try{
+        if(editor!=null && !editor.IsDisposed){if(editor.WindowState==FormWindowState.Minimized)editor.WindowState=FormWindowState.Normal;editor.BringToFront();editor.Activate();return;}
+        PowerPointBridge.CurrentSlide(application);
+        using(ChartGalleryForm gallery=new ChartGalleryForm())if(gallery.ShowDialog(new PowerPointOwner(application))==DialogResult.OK)Open(gallery.SelectedType,false);
+      }catch(Exception ex){MessageBox.Show(ex.Message,"Mello Charts",MessageBoxButtons.OK,MessageBoxIcon.Warning);}
+    }
     public void EditSelected(object control){Open(null,true);}
     public void DuplicateChart(object control){try{PowerPointBridge.DuplicateSelected(application);RefreshRibbon();}catch(Exception ex){MessageBox.Show(ex.Message,"Mello Charts",MessageBoxButtons.OK,MessageBoxIcon.Warning);}}
     public void FitChart(object control){try{PowerPointBridge.FitSelected(application);}catch(Exception ex){MessageBox.Show(ex.Message,"Mello Charts",MessageBoxButtons.OK,MessageBoxIcon.Warning);}}
@@ -120,8 +127,13 @@ namespace MelloCharts {
         dynamic canvas=slide.Shapes.AddShape(1,(float)left,(float)top,(float)width,(float)height);created.Add((object)canvas);canvas.Name=partPrefix+"canvas";names.Add((string)canvas.Name);canvas.Fill.Solid();canvas.Fill.ForeColor.RGB=ColorValue("#FFFFFF");canvas.Line.Visible=0;
         foreach(SceneElement e in scene.Elements){
           dynamic shape;float x=(float)(left+e.X*sx),y=(float)(top+e.Y*sy),w=(float)(e.W*sx),h=(float)(e.H*sy);
-          if(e.Type=="rect"){
-            if(w<=0||h<=0)continue;shape=slide.Shapes.AddShape(1,x,y,w,h);created.Add((object)shape);shape.Name=partPrefix+names.Count;names.Add((string)shape.Name);shape.Fill.Solid();shape.Fill.ForeColor.RGB=ColorValue(e.Color);shape.Line.Visible=0;
+          if(e.Type=="rect"||e.Type=="ellipse"){
+            if(w<=0||h<=0)continue;shape=slide.Shapes.AddShape(e.Type=="ellipse"?9:1,x,y,w,h);created.Add((object)shape);shape.Name=partPrefix+names.Count;names.Add((string)shape.Name);shape.Fill.Solid();shape.Fill.ForeColor.RGB=ColorValue(e.Color);shape.Line.Visible=0;
+          }else if(e.Type=="polygon"){
+            dynamic freeform=slide.Shapes.BuildFreeform(1,(float)(left+e.Points[0]*sx),(float)(top+e.Points[1]*sy));
+            // Straight segments require msoEditingAuto, even when the first node is a corner.
+            for(int i=2;i<e.Points.Length;i+=2)freeform.AddNodes(0,0,(float)(left+e.Points[i]*sx),(float)(top+e.Points[i+1]*sy));
+            shape=freeform.ConvertToShape();created.Add((object)shape);shape.Name=partPrefix+names.Count;names.Add((string)shape.Name);shape.Fill.Solid();shape.Fill.ForeColor.RGB=ColorValue(e.Color);shape.Line.Visible=0;
           }else if(e.Type=="line"){
             shape=slide.Shapes.AddLine(x,y,(float)(left+e.X2*sx),(float)(top+e.Y2*sy));created.Add((object)shape);shape.Name=partPrefix+names.Count;names.Add((string)shape.Name);shape.Line.ForeColor.RGB=ColorValue(e.Color);shape.Line.Weight=(float)Math.Max(.25,e.Size*fontScale);if(e.Dash)shape.Line.DashStyle=4;
           }else if(e.Type=="text"){

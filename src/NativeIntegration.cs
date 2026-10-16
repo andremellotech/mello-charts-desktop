@@ -64,7 +64,8 @@ namespace MelloCharts {
     public static Bitmap Create(string id){
       Bitmap image=new Bitmap(32,32);using(Graphics g=Graphics.FromImage(image))using(Pen navy=new Pen(Color.FromArgb(36,79,115),2.3f))using(Brush blue=new SolidBrush(Color.FromArgb(36,79,115)))using(Brush green=new SolidBrush(Color.FromArgb(97,169,155)))using(Brush amber=new SolidBrush(Color.FromArgb(189,128,80))){
         g.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-        if(id.Contains("Build")){for(int i=0;i<3;i++){int x=4+i*9;g.FillRectangle(blue,x,19-i*3,6,10+i*3);g.FillRectangle(green,x,11-i*3,6,8);}}
+        if(id.Contains("Gallery")){g.FillRectangle(blue,3,3,11,11);g.FillRectangle(green,18,3,11,11);g.FillRectangle(green,3,18,11,11);g.FillRectangle(amber,18,18,11,11);}
+        else if(id.Contains("Build")){for(int i=0;i<3;i++){int x=4+i*9;g.FillRectangle(blue,x,19-i*3,6,10+i*3);g.FillRectangle(green,x,11-i*3,6,8);}}
         else if(id.Contains("Waterfall")){g.FillRectangle(blue,3,12,6,17);g.FillRectangle(amber,13,5,6,7);g.FillRectangle(green,23,5,6,5);g.DrawLine(navy,9,12,13,12);g.DrawLine(navy,19,5,23,5);}
         else if(id.Contains("Columns")){g.FillRectangle(blue,3,14,5,15);g.FillRectangle(green,9,9,5,20);g.FillRectangle(blue,19,5,5,24);g.FillRectangle(green,25,12,5,17);}
         else if(id.Contains("Duplicate")){g.DrawRectangle(navy,4,3,17,20);g.FillRectangle(Brushes.White,11,10,17,20);g.DrawRectangle(navy,11,10,17,20);}

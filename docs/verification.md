@@ -1,44 +1,44 @@
-# Verificação da versão 0.5.0
+# Verificação da versão 0.6.0
 
-Conferido em 15 de outubro de 2026, Windows, com compilador C# do .NET Framework.
+Conferido em 16 de outubro de 2026 no Windows, com compilador C# do .NET Framework. Comando executado: `./build.ps1 -RunTests -RenderGallery`. Resultado: **183 verificações passaram, nenhuma falhou**.
 
-## Concluído
+## Cobertura local
 
-- Compilação da DLL AnyCPU e do instalador EXE com a DLL e os ícones próprios embutidos.
-- **52 testes do núcleo**, abrangendo números brasileiros/internacionais, precisão, validação, JSON estrito, CSV/TSV, fórmulas com cache no XLSX, limites de leitura/descompressão, cálculos dos três tipos, totais, subtotais e ajuste de texto nos quadros de desenho.
-- **25 verificações da ponte**, incluindo metadados em tags com acentos preservados, XML e callbacks da ribbon, interfaces COM dual e `QueryInterface` real do objeto .NET, precisão ao abrir o editor e contratos de criação/atualização com um adaptador de formas.
-- Os contratos de falha verificam preservação do original quando uma nova forma não pode ser nomeada ou os metadados não podem ser salvos. Falha na exclusão final mantém as duas versões e é informada.
-- Revisão independente da ponte COM, callbacks, registro HKCU nas views 32/64, limites de remoção, rollback do instalador e editor.
-- Resolução dos nomes dos callbacks pelo `IDispatch` real do objeto .NET, sem registro ou instalação do suplemento.
-- Hash e integridade do pacote e do payload embutido conferidos antes da entrega.
+| Suíte | Verificações | Cobertura principal |
+| --- | ---: | --- |
+| Núcleo | 52 | Validação, números, JSON/CSV/TSV/XLSX, precisão, cálculos originais e texto |
+| Ponte PowerPoint | 38 | COM, ribbon, metadados, elipses, polígonos e rollback com adaptadores |
+| Novos gráficos | 45 | Oito tipos, cálculos, séries, limites, paletas, geometria e regressões |
+| Editor e galeria | 27 | Tabelas, importação, precisão, seleção e renderização |
+| Integração | 21 | Slide de origem, seleção, cópia, ajuste, contexto, diagnóstico e rascunhos |
 
-- Galeria de três gráficos renderizada em PNG pelo mesmo código da prévia e exportação. Imagens inspecionadas para alinhamento, escala, contraste, legendas e destaque do consolidado.
-- Novos testes: compatibilidade com projetos antigos, persistência de estilos, números abreviados sem perda dos dados, eixo com passos convencionais e fracionários, quadros dos rótulos de colunas e limites com 12 categorias.
-- Contraste dos valores externos da cascata conferido nas nove combinações de estilo e paleta. Referência zero mantida quando a grade é ocultada.
-- Leitura do editor e importação preservam estilo, abreviação, grade e precisão. A revisão independente identificou o desalinhamento de rótulos de colunas, corrigido e coberto por regressão para 1, 4 e 12 categorias.
+- DLL AnyCPU e instalador EXE compilados com DLL e ícones próprios embutidos; versões 0.6.0 consistentes.
+- PNGs dos 11 modelos gerados pelo mesmo renderizador da prévia/exportação. Catálogo e exemplos de barras, linhas, rosca e Pareto inspecionados visualmente.
+- Testes de 12 categorias, todos os estilos/paletas, nomes longos, valores negativos nos comparativos e números zero/subnormais.
+- Legendas conferidas contra as cores desenhadas; marcadores de baseline evitam quadros dos valores nas barras.
+- Eixos subnormais não repetem rótulos ou referência zero. Fatias imperceptíveis não geram polígonos degenerados; seus valores continuam no modelo/legenda.
+- Área e rosca usam polígonos fechados; marcadores usam elipses nativas. Falhas de conversão/nomeação limpam os novos objetos e preservam o original.
+- Precisão e projetos antigos preservados ao editar/importar. Pizza, rosca e Pareto usam tabela de duas colunas.
+- Revisão independente do catálogo, editor e ponte. Galeria conferida em tamanho amplo e reduzido.
+- Integração mantém o slide de origem, duplica o grupo nativo e tenta recuperar o último estado válido ao encerrar a janela original.
 
-- **21 verificações de integração** com adaptadores e janelas nativas invisíveis: dimensões do slide, vínculo ao slide original, proteção entre apresentações, seleção de elementos, duplicação nativa, geometria/rollback, estados da ribbon, ícones, diagnóstico e rascunhos.
-- A regressão de fechamento do proprietário nativo reproduz a destruição do HWND de uma janela invisível independente do Office. Confere um único JSON válido salvo e o descarte posterior do editor, sem reentrância na destruição nativa.
-- A duplicação usa `Shape.Duplicate` e verifica os metadados antes de concluir. O teste local cobre preservação de personalizações pelo contrato de duplicação nativa e remoção da cópia em falha, sem excluir o original.
-- Revisão independente encerrou os dois achados importantes: destruição do dono nativo sem FormClosing e duplicação que redesenhava em vez de copiar o grupo.
+## Validação no PowerPoint real ainda pendente
 
-## Não confirmado neste ambiente
+No ensaio anterior, `OfficeSmoke` tentou criar uma apresentação separada por `PowerPoint.Application`, mas recebeu `E_ACCESSDENIED` (80070005) antes do desenho. Não houve nova tentativa de contornar esse bloqueio.
 
-O teste `OfficeSmoke` tentou criar uma apresentação separada por `PowerPoint.Application`. A ativação retornou `E_ACCESSDENIED` (80070005) antes de qualquer desenho. Não foi tentado contornar esse bloqueio.
+**A ativação do suplemento instalado, a fidelidade dos polígonos no PowerPoint, a navegação com o editor aberto, o histórico de desfazer e o ciclo salvar/reabrir precisam do ensaio no computador de destino.** Os adaptadores testam o contrato da API; não comprovam uma instalação real do Office.
 
-Assim, **a ativação do suplemento instalado, os desenhos no PowerPoint real, a navegação com o editor aberto, a resposta do histórico de desfazer, a fidelidade visual da interface aberta e o ciclo salvar/reabrir da apresentação ainda precisam do ensaio no computador de destino**. Testes simulados da ponte não equivalem à validação do Office.
+O instalador não foi executado para instalar/remover ou registrar o suplemento neste computador. A revisão de instalação/rollback foi estática. Os binários não têm assinatura digital comercial.
 
-O instalador não foi executado para instalar/remover e nenhuma chave do suplemento foi criada neste computador. A revisão de instalação/rollback foi estática. Não houve assinatura digital comercial dos binários.
+## Ensaio de aceitação no computador de destino
 
-## Ensaio de aceitação
+1. Salvar documentos, fechar o PowerPoint e instalar a versão 0.6.0.
+2. Confirmar a aba Mello Charts e a galeria com 11 miniaturas; testar seleção e rolagem.
+3. Inserir cada modelo e comparar o slide com o PNG. Conferir áreas, elipses, pizza/rosca, linhas e baseline.
+4. Importar CSV de duas colunas na rosca e quatro colunas nas linhas; conferir valores e precisão.
+5. Editar, duplicar, mover, redimensionar, girar e atualizar o grupo; verificar desfazer.
+6. Salvar/reabrir e recuperar a tabela pelo editor. Abrir um JSON da versão anterior.
+7. Com duas apresentações, verificar o destino de origem e a recuperação ao fechar a janela original.
+8. Conferir Diagnóstico/Verificar. Remover pelo instalador e confirmar que as apresentações continuam intactas.
 
-1. Instalar explicitamente pelo EXE com o PowerPoint fechado.
-2. Confirmar a aba Mello Charts.
-3. Inserir os três tipos, testar os estilos e conferir rótulos, totais e linha de baseline. Exportar PNG e comparar com o slide.
-4. Mover, redimensionar e girar o grupo, então editar e atualizar.
-5. Salvar/reabrir e recuperar os dados pelo botão Editar dados.
-6. Copiar o grupo para outro slide/apresentação e conferir os metadados.
-7. Com duas apresentações abertas, testar o bloqueio de atualização no arquivo errado e a recuperação ao fechar a janela de origem.
-8. Conferir Diagnóstico e Verificar. Remover pelo instalador e conferir que as apresentações continuam intactas.
-
-Use inicialmente apresentações de teste. O [guia de instalação](install-guide.md) contém os passos para diagnóstico caso o Office não carregue o suplemento.
+Use apresentações de teste. Consulte o [guia de instalação](install-guide.md) se o Office não carregar o suplemento.

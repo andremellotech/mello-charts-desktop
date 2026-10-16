@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,20 +15,27 @@ namespace MelloCharts
     public sealed class ChartDocument { public int version; public string type,title,subtitle,source,unit,palette; public int decimals; public bool showLabels,showBaseline,includeTotal; public string style="executive"; public bool compactNumbers=false,showGrid=true; public List<ChartRow> rows; }
     public sealed class ChartRow { public string label,kind; public double actual,forecast,baseline,value; }
     public sealed class Scene { public double Width=1280,Height=720; public List<SceneElement> Elements=new List<SceneElement>(); }
-    public sealed class SceneElement { public string Type,Text,Color,Align,Role; public double X,Y,W,H,X2,Y2,Size; public bool Bold,Dash; public int Category=-1; }
-    public static class ChartCore
+    public sealed class SceneElement { public string Type,Text,Color,Align,Role; public double X,Y,W,H,X2,Y2,Size; public double[] Points; public bool Bold,Dash; public int Category=-1; }
+    public static partial class ChartCore
     {
         const int MaxText = 1000000;
         static readonly CultureInfo Pt = CultureInfo.GetCultureInfo("pt-BR");
         static ArgumentException Bad(string message) { return new ArgumentException(message); }
-        static bool IsType(string type) { return type=="buildup" || type=="waterfall" || type=="columns"; }
+        static bool IsType(string type) { return ChartCatalog.Contains(type); }
         static void Number(double n) { if (Double.IsNaN(n) || Double.IsInfinity(n) || Math.Abs(n)>1000000000) throw Bad("Use um número finito de até 1 bilhão por célula."); }
         static void TextField(string value, string name, int limit, bool required) { if(value==null || value.Length>limit || value.Any(c=>Char.IsControl(c)) || (required && value.Trim().Length==0)) throw Bad("Revise " + name + " (até " + limit + " caracteres)."); }
         public static ChartDocument Example(string type)
         {
             if(!IsType(type)) throw Bad("Tipo de gráfico inválido.");
             ChartDocument d=new ChartDocument {version=1,type=type,title="Composição do investimento",subtitle="Realizado e saldo projetado por frente de trabalho",source="Exemplo com dados fictícios",unit="R$ mil",palette="ocean",decimals=0,showLabels=true,showBaseline=true,includeTotal=true,rows=new List<ChartRow>()};
-            if(type=="waterfall") {
+            if(ChartCatalog.Get(type).SingleValue) {
+                d.title=type=="pareto"?"Onde concentrar as ações de melhoria":"Composição do investimento";
+                d.subtitle=type=="pareto"?"Categorias que mais contribuem para o total e participação acumulada":"Participação por frente de trabalho, com valores e percentuais";
+                d.showBaseline=false; d.includeTotal=false;
+                string[] names={"Engenharia","Equipamentos","Infraestrutura","Implantação","Serviços","Outros"};
+                double[] values={420,300,160,100,60,40};
+                for(int i=0;i<names.Length;i++) d.rows.Add(new ChartRow {label=names[i],value=values[i]});
+            } else if(type=="waterfall") {
                 d.title="Do baseline à projeção final"; d.subtitle="Contribuição de cada ajuste para o EAC";
                 d.rows.Add(new ChartRow{label="Baseline",value=1200,kind="base"}); d.rows.Add(new ChartRow{label="Escopo",value=100,kind="delta"}); d.rows.Add(new ChartRow{label="Eficiência",value=-60,kind="delta"}); d.rows.Add(new ChartRow{label="Preços",value=40,kind="delta"}); d.rows.Add(new ChartRow{label="EAC",value=0,kind="total"});
             } else if(type=="buildup") {
@@ -36,6 +43,20 @@ namespace MelloCharts
             } else {
                 d.title="Desempenho por período"; d.subtitle="Comparação entre realizado, projeção e baseline";
                 d.rows.Add(new ChartRow{label="Janeiro",actual=180,forecast=210,baseline=200}); d.rows.Add(new ChartRow{label="Fevereiro",actual=240,forecast=250,baseline=230}); d.rows.Add(new ChartRow{label="Março",actual=280,forecast=270,baseline=260}); d.rows.Add(new ChartRow{label="Abril",actual=310,forecast=320,baseline=300});
+            }
+            if(type=="bars") {
+                d.title="Desempenho por área"; d.subtitle="Realizado e projetado comparados com a referência aprovada";
+                string[] names={"Operações","Engenharia","Tecnologia","Suprimentos"};
+                for(int i=0;i<d.rows.Count;i++) d.rows[i].label=names[i];
+            }
+            if(type=="lines" || type=="area" || type=="combo") {
+                d.title="Evolução dos resultados"; d.subtitle="Realizado e projetado na mesma escala, com baseline de referência";
+                d.rows.Add(new ChartRow{label="Maio",actual=350,forecast=370,baseline=340});
+                d.rows.Add(new ChartRow{label="Junho",actual=390,forecast=420,baseline=380});
+            }
+            if(type=="stacked100") {
+                d.title="Avanço por frente de trabalho"; d.subtitle="Parcela realizada e saldo projetado restante em cada categoria";
+                d.showBaseline=false; d.includeTotal=false;
             }
             return d;
         }
@@ -51,8 +72,10 @@ namespace MelloCharts
                 // All numeric fields must remain serializable even when not used by this chart type.
                 Number(r.actual); Number(r.forecast); Number(r.baseline); Number(r.value);
                 if(d.type=="waterfall") { if((i==0 && r.kind!="base") || (i>0 && r.kind!="delta" && r.kind!="total")) throw Bad("A primeira etapa deve ser a única base; use variação ou total nas demais."); }
-                else if(d.type=="buildup" && (r.actual<0 || r.forecast<0 || r.baseline<0)) throw Bad("O build-up usa valores não negativos.");
+                else if(ChartCatalog.Get(d.type).SingleValue) { if(r.value<0) throw Bad("Pizza, rosca e Pareto usam valores não negativos."); }
+                else if(ChartCatalog.Get(d.type).NonNegative && (r.actual<0 || r.forecast<0 || (ChartCatalog.Get(d.type).Baseline && r.baseline<0))) throw Bad("Este gráfico usa valores não negativos.");
             }
+            if(ChartCatalog.Get(d.type).SingleValue && d.rows.Sum(r=>r.value)<=0) throw Bad("Informe pelo menos um valor positivo para calcular a participação.");
             return d;
         }
         static JavaScriptSerializer Serializer() { return new JavaScriptSerializer {MaxJsonLength=MaxText,RecursionLimit=32}; }
@@ -113,6 +136,7 @@ namespace MelloCharts
                 IList rows=Field(o,"rows") as IList; if(rows==null || rows.Count<1 || rows.Count>12) throw Bad("Use de 1 a 12 categorias.");
                 foreach(object item in rows) { IDictionary<string,object> r=item as IDictionary<string,object>; if(r==null) throw Bad("Linha de projeto inválida."); ChartRow row=new ChartRow {label=StringField(r,"label")};
                     if(d.type=="waterfall") { row.kind=StringField(r,"kind"); row.value=NumericField(r,"value"); }
+                    else if(ChartCatalog.Get(d.type).SingleValue) { row.value=NumericField(r,"value"); }
                     else { row.actual=NumericField(r,"actual"); row.forecast=NumericField(r,"forecast"); row.baseline=NumericField(r,"baseline"); }
                     // Validate optional numeric fields too, instead of silently discarding corrupt values.
                     if(r.ContainsKey("actual")) row.actual=NumericField(r,"actual"); if(r.ContainsKey("forecast")) row.forecast=NumericField(r,"forecast"); if(r.ContainsKey("baseline")) row.baseline=NumericField(r,"baseline"); if(r.ContainsKey("value")) row.value=NumericField(r,"value");
@@ -161,8 +185,8 @@ namespace MelloCharts
         {
             if(rows.Count<2)throw Bad("Inclua cabeçalho e pelo menos uma linha."); if(rows[0].Count>64)throw Bad("A tabela tem colunas demais.");
             string[] headers=rows[0].Select(HeaderKey).ToArray(); if(headers.Any(String.IsNullOrEmpty) || headers.Distinct().Count()!=headers.Length) throw Bad("Há cabeçalhos vazios ou duplicados.");
-            string[] keys=type=="waterfall" ? new string[]{"label","value","kind"} : new string[]{"label","actual","forecast","baseline"};
-            if(keys.Any(k=>Array.IndexOf(headers,k)<0))throw Bad(type=="waterfall"?"Cabeçalho esperado: categoria;valor;tipo.":"Cabeçalho esperado: categoria;realizado;projetado;baseline.");
+            string[] keys=type=="waterfall" ? new string[]{"label","value","kind"} : ChartCatalog.Get(type).SingleValue ? new string[]{"label","value"} : new string[]{"label","actual","forecast","baseline"};
+            if(keys.Any(k=>Array.IndexOf(headers,k)<0))throw Bad("Cabeçalho esperado: "+ChartCatalog.Get(type).Header+".");
             ChartDocument d=Example(type);d.rows.Clear();
             for(int i=1;i<rows.Count;i++) {List<string> cells=rows[i];if(cells.Count!=headers.Length)throw Bad("Linha " + (i+1) + ": quantidade de colunas diferente do cabeçalho.");ChartRow r=new ChartRow();
                 foreach(string key in keys) {string v=cells[Array.IndexOf(headers,key)];if(key=="label")r.label=Regex.Replace(v.Trim(),"\\s+"," ");else if(key=="kind") {switch(Norm(v)){case "base":r.kind="base";break;case "variacao":case "delta":r.kind="delta";break;case "subtotal":case "total":r.kind="total";break;default:throw Bad("Tipo de etapa inválido na linha " + (i+1) + ".");}}else {double n;if(invariantNumbers) {if(!Double.TryParse(v,NumberStyles.Float,CultureInfo.InvariantCulture,out n) || String.IsNullOrWhiteSpace(v))throw Bad("Número inválido na linha " + (i+1) + ".");Number(n);}else n=ParseNumber(v);switch(key){case "actual":r.actual=n;break;case "forecast":r.forecast=n;break;case "baseline":r.baseline=n;break;case "value":r.value=n;break;}}} d.rows.Add(r);
@@ -252,10 +276,10 @@ namespace MelloCharts
         static string CsvNumber(double value) { return value.ToString("R",CultureInfo.InvariantCulture).Replace('.',','); }
         public static string ToCsv(ChartDocument d)
         {
-            Validate(d);StringBuilder b=new StringBuilder("\uFEFF"+(d.type=="waterfall"?"categoria;valor;tipo":"categoria;realizado;projetado;baseline"));
+            Validate(d);StringBuilder b=new StringBuilder("\uFEFF"+ChartCatalog.Get(d.type).Header);
             // Totals are automatic: exporting the ignored zero placeholder also permits
             // accumulated totals larger than the per-input-cell limit to round-trip.
-            foreach(ChartRow r in d.rows) {b.Append("\r\n").Append(CsvLabel(r.label));if(d.type=="waterfall")b.Append(';').Append(CsvNumber(r.kind=="total"?0:r.value)).Append(';').Append(r.kind=="delta"?"variacao":r.kind);else b.Append(';').Append(CsvNumber(r.actual)).Append(';').Append(CsvNumber(r.forecast)).Append(';').Append(CsvNumber(r.baseline));}return b.ToString();
+            foreach(ChartRow r in d.rows) {b.Append("\r\n").Append(CsvLabel(r.label));if(d.type=="waterfall")b.Append(';').Append(CsvNumber(r.kind=="total"?0:r.value)).Append(';').Append(r.kind=="delta"?"variacao":r.kind);else if(ChartCatalog.Get(d.type).SingleValue)b.Append(';').Append(CsvNumber(r.value));else b.Append(';').Append(CsvNumber(r.actual)).Append(';').Append(CsvNumber(r.forecast)).Append(';').Append(CsvNumber(r.baseline));}return b.ToString();
         }
         sealed class Palette
         {
@@ -313,6 +337,7 @@ namespace MelloCharts
         }
         public static Scene BuildScene(ChartDocument d)
         {
+            if(d!=null && d.type!="buildup" && d.type!="waterfall" && d.type!="columns") return BuildAdvancedScene(Validate(d));
             Validate(d);Scene s=new Scene();bool dark=d.style=="dark",minimal=d.style=="minimal";Palette p=Colors(d.palette,dark);List<Bar> bars=Analyze(d);
             string background=dark?"#101E2E":"#FFFFFF",ink=dark?"#F3F6FB":"#20374D",muted=dark?"#A4B6C9":"#65798B",grid=dark?"#26384B":"#E9EFF3",axis=dark?"#526A82":"#AABAC7",band=dark?"#192D42":"#F1F6F9";
             AddRect(s,0,0,s.Width,s.Height,background,"background",-1);
