@@ -13,8 +13,8 @@ using System.Windows.Forms;
 [assembly:AssemblyCompany("Mello Charts")]
 [assembly:AssemblyProduct("Mello Charts")]
 [assembly:AssemblyCopyright("Copyright 2026 André Mello")]
-[assembly:AssemblyVersion("0.6.0.0")]
-[assembly:AssemblyFileVersion("0.6.0.0")]
+[assembly:AssemblyVersion("0.7.0.0")]
+[assembly:AssemblyFileVersion("0.7.0.0")]
 [assembly:ComVisible(false)]
 
 namespace MelloCharts {
@@ -60,7 +60,7 @@ namespace MelloCharts {
     public void DuplicateChart(object control){try{PowerPointBridge.DuplicateSelected(application);RefreshRibbon();}catch(Exception ex){MessageBox.Show(ex.Message,"Mello Charts",MessageBoxButtons.OK,MessageBoxIcon.Warning);}}
     public void FitChart(object control){try{PowerPointBridge.FitSelected(application);}catch(Exception ex){MessageBox.Show(ex.Message,"Mello Charts",MessageBoxButtons.OK,MessageBoxIcon.Warning);}}
     public void ShowDiagnostics(object control){using(SupportForm form=new SupportForm(InstallationHealth.Collect(typeof(Connect).Assembly.GetName().Version.ToString(3)))){try{form.ShowDialog(new PowerPointOwner(application));}catch{form.ShowDialog();}}}
-    public void ShowHelp(object control){MessageBox.Show("Mello Charts "+typeof(Connect).Assembly.GetName().Version.ToString(3)+"\n\n1. Selecione um slide e escolha o gráfico nesta aba.\n2. Edite ou importe os dados e escolha o estilo no painel lateral. O editor permite continuar navegando no PowerPoint.\n3. Clique em Inserir no slide. O destino é o slide em que o editor foi aberto.\n4. Para editar depois, selecione o grupo ou um elemento dele e use Editar dados.\n5. Salve a apresentação e um backup JSON do projeto.\n\nDuplicar gráfico preserva ajustes nativos da cópia. Ajustar ao slide centraliza em 16:9 e remove a rotação.\n\nRecuperar rascunho abre o último estado válido preservado ao fechar a janela do PowerPoint.\n\nDiagnóstico apenas verifica a instalação. Exportar PNG salva uma imagem em 1920 × 1080.\n\nAtualizar recria o grupo e substitui edições manuais internas. Mantenha o grupo e os metadados para recuperar os dados. Use o instalador para remover o suplemento.","Mello Charts",MessageBoxButtons.OK,MessageBoxIcon.Information);}
+    public void ShowHelp(object control){MessageBox.Show("Mello Charts "+typeof(Connect).Assembly.GetName().Version.ToString(3)+"\n\n1. Selecione um slide e abra a Galeria de gráficos nesta aba.\n2. Edite ou importe os dados e escolha o estilo no painel lateral. Em Cores personalizadas, use qualquer cor HEX ou RGB. O editor permite continuar navegando no PowerPoint.\n3. Clique em Inserir no slide. O destino é o slide em que o editor foi aberto.\n4. Para editar depois, selecione o grupo ou um elemento dele e use Editar dados.\n5. Salve a apresentação e um backup JSON do projeto.\n\nDuplicar gráfico preserva ajustes nativos da cópia. Ajustar ao slide centraliza em 16:9 e remove a rotação.\n\nRecuperar rascunho abre o último estado válido preservado ao fechar a janela do PowerPoint.\n\nDiagnóstico apenas verifica a instalação. Exportar PNG salva uma imagem em 1920 × 1080.\n\nAtualizar recria o grupo e substitui edições manuais internas. Mantenha o grupo e os metadados para recuperar os dados. Use o instalador para remover o suplemento.","Mello Charts",MessageBoxButtons.OK,MessageBoxIcon.Information);}
     private void Open(string type,bool edit){
       try{
         if(application==null)throw new InvalidOperationException("O PowerPoint não conectou o suplemento. Feche e abra o PowerPoint novamente.");

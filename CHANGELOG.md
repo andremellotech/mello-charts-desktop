@@ -1,5 +1,14 @@
 # Histórico
 
+## 0.7.0 experimental
+
+- Qualquer cor RGB opaca por seletor do Windows, HEX de 3/6 dígitos ou entrada RGB.
+- Cores personalizadas de séries, baseline/acumulado, aumentos/reduções, fundo e 12 fatias de pizza/rosca.
+- Texto com contraste automático nos preenchimentos e fundos personalizados, incluindo tons médios e faixas de destaque.
+- Persistência em JSON, metadados, edição e importação. Restauração de cores padrão e compatibilidade com projetos anteriores.
+- Validação de entrada inválida sem interromper o editor; exemplo visual e guia de cores incluídos.
+- 203 verificações locais passaram, incluindo 20 de cores. Instalação e renderização real no Office continuam pendentes.
+
 ## 0.6.0 experimental
 
 - Catálogo ampliado de 3 para 11 modelos: barras horizontais, linhas, área comparativa, colunas + linha, empilhado 100%, pizza, rosca e Pareto.

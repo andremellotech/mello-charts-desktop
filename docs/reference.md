@@ -2,7 +2,7 @@
 
 Suplemento gratuito e de código aberto para **PowerPoint no Windows**, com instalador EXE e funcionamento offline. Crie gráficos financeiros com dados em tabela, prévia e formas editáveis no slide.
 
-**Versão 0.6.0 experimental.** O instalador foi compilado; o núcleo e a ponte COM passaram pelos testes descritos em [Verificação](verification.md). A ativação do suplemento instalado em um PowerPoint real ainda precisa ser conferida. O ambiente de desenvolvimento negou a inicialização automática do PowerPoint com `E_ACCESSDENIED`.
+**Versão 0.7.0 experimental.** O instalador foi compilado; o núcleo e a ponte COM passaram pelos testes descritos em [Verificação](verification.md). A ativação do suplemento instalado em um PowerPoint real ainda precisa ser conferida. O ambiente de desenvolvimento negou a inicialização automática do PowerPoint com `E_ACCESSDENIED`.
 
 ## Baixar e instalar
 
@@ -91,6 +91,8 @@ Pizza, rosca e Pareto exigem valores não negativos e total positivo. Área e em
 Na pizza e na rosca, parcelas positivas abaixo de 0,1% aparecem como **<0,1%**. Fatias imperceptíveis são omitidas do desenho para evitar polígonos degenerados; seus valores permanecem na legenda, no total e no projeto.
 
 O Pareto ordena somente o desenho e mostra o acumulado. A linha de 80% é uma referência fixa, não uma meta calculada.
+
+[Personalizar qualquer cor RGB, fundo e fatias](custom-colors.md).
 
 ## Dados de entrada
 

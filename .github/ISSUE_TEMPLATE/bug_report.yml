@@ -20,7 +20,7 @@ body:
     id: version
     attributes:
       label: Versão do Mello Charts
-      placeholder: "0.6.0"
+      placeholder: "0.7.0"
     validations:
       required: true
   - type: input

@@ -1,4 +1,4 @@
-MELLO CHARTS DESKTOP 0.6.0 - VERSAO EXPERIMENTAL
+MELLO CHARTS DESKTOP 0.7.0 - VERSAO EXPERIMENTAL
 
 PARA INSTALAR
 1. Salve seus documentos e feche o PowerPoint.
@@ -11,6 +11,8 @@ colunas + linha, empilhado 100%, pizza, rosca e Pareto.
 
 APARENCIA
 Escolha Executivo, Essencial ou Escuro no painel lateral.
+Use Cores personalizadas para qualquer cor RGB, por seletor, HEX ou RGB.
+Configure series, fundo e fatias. Restaurar padrao remove as substituicoes.
 Ajuste paleta, valores, baseline e linhas auxiliares.
 Exportar PNG salva em 1920 x 1080. Inserir no slide cria formas editaveis.
 Para a tabela, use Editar dados do Mello Charts, nao o grafico nativo do Office.
@@ -35,8 +37,8 @@ O instalador nao tem assinatura digital comercial. Em computadores
 corporativos, a instalacao pode depender de aprovacao da TI.
 
 TESTES
-183 verificacoes passaram: 52 nucleo, 38 ponte, 45 novos graficos,
-27 editor/galeria e 21 integracao.
+203 verificacoes passaram: 52 nucleo, 38 ponte, 45 novos graficos,
+27 editor/galeria, 20 cores e 21 integracao.
 A ativacao dentro de um PowerPoint real ainda precisa ser conferida.
 O teste automatico de Office foi bloqueado por permissao deste ambiente.
 O instalador nao foi executado para registrar componentes neste computador.

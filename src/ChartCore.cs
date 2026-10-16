@@ -12,7 +12,7 @@ using System.Xml;
 using System.Xml.Linq;
 namespace MelloCharts
 {
-    public sealed class ChartDocument { public int version; public string type,title,subtitle,source,unit,palette; public int decimals; public bool showLabels,showBaseline,includeTotal; public string style="executive"; public bool compactNumbers=false,showGrid=true; public List<ChartRow> rows; }
+    public sealed class ChartDocument { public int version; public string type,title,subtitle,source,unit,palette; public int decimals; public bool showLabels,showBaseline,includeTotal; public string style="executive"; public bool compactNumbers=false,showGrid=true; public ChartColors customColors; public List<ChartRow> rows; }
     public sealed class ChartRow { public string label,kind; public double actual,forecast,baseline,value; }
     public sealed class Scene { public double Width=1280,Height=720; public List<SceneElement> Elements=new List<SceneElement>(); }
     public sealed class SceneElement { public string Type,Text,Color,Align,Role; public double X,Y,W,H,X2,Y2,Size; public double[] Points; public bool Bold,Dash; public int Category=-1; }
@@ -66,6 +66,7 @@ namespace MelloCharts
             TextField(d.title,"título",80,true); TextField(d.subtitle,"subtítulo",110,false); TextField(d.source,"fonte",100,false); TextField(d.unit,"unidade",16,false);
             if((d.palette!="ocean" && d.palette!="forest" && d.palette!="ink") || d.decimals<0 || d.decimals>2) throw Bad("Opções de apresentação inválidas.");
             if(d.style!="executive" && d.style!="minimal" && d.style!="dark") throw Bad("Estilo de apresentação inválido.");
+            ColorTools.Validate(d.customColors);
             if(d.rows==null || d.rows.Count<1 || d.rows.Count>12) throw Bad("Use de 1 a 12 categorias.");
             for(int i=0;i<d.rows.Count;i++) {
                 ChartRow r=d.rows[i]; if(r==null) throw Bad("Linha " + (i+1) + ": dados ausentes."); TextField(r.label,"categoria da linha " + (i+1),32,true);
@@ -133,6 +134,7 @@ namespace MelloCharts
                 ChartDocument d=new ChartDocument {version=IntField(o,"version"),type=StringField(o,"type"),title=StringField(o,"title"),subtitle=StringField(o,"subtitle"),source=StringField(o,"source"),unit=StringField(o,"unit"),palette=StringField(o,"palette"),decimals=IntField(o,"decimals"),showLabels=BoolField(o,"showLabels"),showBaseline=BoolField(o,"showBaseline"),includeTotal=BoolField(o,"includeTotal"),rows=new List<ChartRow>()};
                 // Optional presentation fields keep saved v0.3 projects compatible.
                 if(o.ContainsKey("style"))d.style=StringField(o,"style");if(o.ContainsKey("compactNumbers"))d.compactNumbers=BoolField(o,"compactNumbers");if(o.ContainsKey("showGrid"))d.showGrid=BoolField(o,"showGrid");
+                if(o.ContainsKey("customColors"))d.customColors=ColorTools.Read(o["customColors"]);
                 IList rows=Field(o,"rows") as IList; if(rows==null || rows.Count<1 || rows.Count>12) throw Bad("Use de 1 a 12 categorias.");
                 foreach(object item in rows) { IDictionary<string,object> r=item as IDictionary<string,object>; if(r==null) throw Bad("Linha de projeto inválida."); ChartRow row=new ChartRow {label=StringField(r,"label")};
                     if(d.type=="waterfall") { row.kind=StringField(r,"kind"); row.value=NumericField(r,"value"); }
@@ -338,11 +340,11 @@ namespace MelloCharts
         public static Scene BuildScene(ChartDocument d)
         {
             if(d!=null && d.type!="buildup" && d.type!="waterfall" && d.type!="columns") return BuildAdvancedScene(Validate(d));
-            Validate(d);Scene s=new Scene();bool dark=d.style=="dark",minimal=d.style=="minimal";Palette p=Colors(d.palette,dark);List<Bar> bars=Analyze(d);
-            string background=dark?"#101E2E":"#FFFFFF",ink=dark?"#F3F6FB":"#20374D",muted=dark?"#A4B6C9":"#65798B",grid=dark?"#26384B":"#E9EFF3",axis=dark?"#526A82":"#AABAC7",band=dark?"#192D42":"#F1F6F9";
+            Validate(d);Scene s=new Scene();bool dark=d.style=="dark",minimal=d.style=="minimal";Palette p=Colors(d);List<Bar> bars=Analyze(d);SurfaceColors surface=new SurfaceColors(d);
+            string background=surface.Background,ink=surface.Ink,muted=surface.Muted,grid=surface.Grid,axis=surface.Axis,band=surface.Band;
             AddRect(s,0,0,s.Width,s.Height,background,"background",-1);
             string chartName=d.type=="buildup"?"BUILD-UP":d.type=="waterfall"?"CASCATA":"COMPARATIVO";
-            if(!minimal){AddRect(s,64,29,28,4,p.Actual,"accent",-1);AddText(s,104,21,1000,24,chartName,13,p.Actual,true,"left","eyebrow",-1);}
+            if(!minimal){AddRect(s,64,29,28,4,p.Actual,"accent",-1);AddText(s,104,21,1000,24,chartName,13,ColorText(d,p.Actual,background),true,"left","eyebrow",-1);}
             AddText(s,64,54,1152,78,Wrap(d.title,59),36,ink,true,"left","title",-1);
             AddText(s,64,137,1152,34,Wrap(d.subtitle,100),18,muted,false,"left","subtitle",-1);
             AddText(s,64,193,400,26,d.unit+(d.compactNumbers?" (abreviado)":""),15,muted,false,"left","unit",-1);
@@ -391,8 +393,8 @@ namespace MelloCharts
                     if(d.showLabels){
                         AddText(s,cx-slot*0.46,y(b.To)-33,slot*0.92,28,label(b.To),b.Total?24:bars.Count>8?16:21,ink,true,"center","value",i);
                         double actualH=y(0)-y(b.Actual),forecastH=y(b.Actual)-y(b.To);string av=label(b.Actual),fv=label(b.Forecast);
-                        if(actualH>38 && FitText(av,bw-8,25,17,true)>=12)AddText(s,x+4,y(b.Actual)+actualH/2-12,bw-8,25,av,17,dark?"#101E2E":"#FFFFFF",true,"center","actualValue",i);
-                        if(forecastH>38 && FitText(fv,bw-8,25,17,true)>=12)AddText(s,x+4,y(b.To)+forecastH/2-12,bw-8,25,fv,17,dark?"#FFFFFF":"#173E45",true,"center","forecastValue",i);
+                        if(actualH>38 && FitText(av,bw-8,25,17,true)>=12)AddText(s,x+4,y(b.Actual)+actualH/2-12,bw-8,25,av,17,FillInk(d,p.Actual,dark?"#101E2E":"#FFFFFF"),true,"center","actualValue",i);
+                        if(forecastH>38 && FitText(fv,bw-8,25,17,true)>=12)AddText(s,x+4,y(b.To)+forecastH/2-12,bw-8,25,fv,17,FillInk(d,p.Forecast,dark?"#FFFFFF":"#173E45"),true,"center","forecastValue",i);
                     }
                 }else{
                     double w=bw*0.44;double[] series=new[]{b.Actual,b.Forecast};string[] colors=new[]{p.Actual,p.Forecast};

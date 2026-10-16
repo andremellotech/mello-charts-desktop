@@ -89,3 +89,13 @@ Priorize categorias pela contribuição acumulada.
 [Projeto JSON](pareto.json) · [Tabela CSV](pareto.csv)
 
 ![Pareto](pareto.png)
+
+## Cores personalizadas
+
+Use **Cores personalizadas…** no painel do editor. Digite HEX/RGB ou abra o seletor; configure séries, fundo e fatias e restaure o padrão quando precisar.
+
+[Projeto JSON](cores-personalizadas.json) · [Tabela CSV](cores-personalizadas.csv)
+
+![Exemplo com cores personalizadas](cores-personalizadas.png)
+
+![Janela de cores](editor-de-cores.png)

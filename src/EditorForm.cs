@@ -13,6 +13,8 @@ namespace MelloCharts {
     private readonly ComboBox palette=new ComboBox(),decimals=new ComboBox(),style=new ComboBox();
     private readonly CheckBox labels=new CheckBox(),baseline=new CheckBox(),total=new CheckBox(),compact=new CheckBox(),gridLines=new CheckBox();
     private readonly ToolTip tips=new ToolTip();
+    private ChartColors customColors;
+    private readonly Button colorButton=new Button();
     private readonly DataGridView grid=new DataGridView();private readonly ChartPreview preview=new ChartPreview();
     private readonly Label status=new Label(),method=new Label(),typeLabel=new Label();private readonly Button apply=new Button();private bool loading=false,valid=false;
     private static readonly CultureInfo Pt=CultureInfo.GetCultureInfo("pt-BR");
@@ -35,7 +37,9 @@ namespace MelloCharts {
       SideHeading(settings,"APARÊNCIA");
       if(context!=null)settings.Controls.Add(new Label{Text="Vinculado ao slide "+context.SlideNumber+". Você pode navegar no PowerPoint sem alterar esse destino.",Width=202,Height=58,ForeColor=Color.FromArgb(92,111,125),Margin=new Padding(0,0,0,12)});
       style.DropDownStyle=ComboBoxStyle.DropDownList;style.Items.AddRange(new object[]{"Executivo","Essencial","Escuro"});SideField(settings,"Estilo pronto",style,48);
-      palette.DropDownStyle=ComboBoxStyle.DropDownList;palette.Items.AddRange(new object[]{"Atlântico · azul e verde","Floresta · verde e sálvia","Grafite · cinza e ardósia"});SideField(settings,"Cores",palette,48);
+      palette.DropDownStyle=ComboBoxStyle.DropDownList;palette.Items.AddRange(new object[]{"Atlântico · azul e verde","Floresta · verde e sálvia","Grafite · cinza e ardósia"});SideField(settings,"Paleta pronta",palette,48);
+      colorButton.Text="Cores personalizadas…";colorButton.Width=202;colorButton.Height=34;colorButton.FlatStyle=FlatStyle.Flat;colorButton.BackColor=Color.White;colorButton.Margin=new Padding(0,0,0,10);colorButton.Click+=(s,e)=>CustomizeColors();settings.Controls.Add(colorButton);
+      tips.SetToolTip(colorButton,"Use qualquer cor RGB: seletor, HEX ou valores RGB. As cores são salvas no projeto e no grupo do slide. Escolher outra paleta pronta restaura suas cores.");
       decimals.DropDownStyle=ComboBoxStyle.DropDownList;decimals.Items.AddRange(new object[]{"0","1","2"});SideField(settings,"Casas decimais",decimals,48);
       labels.Text="Mostrar valores";baseline.Text="Mostrar baseline";total.Text="Adicionar total";compact.Text="Abreviar números";gridLines.Text="Linhas de referência";
       foreach(CheckBox check in new[]{labels,baseline,total,compact,gridLines}){check.AutoSize=true;check.Margin=new Padding(0,0,0,4);settings.Controls.Add(check);check.CheckedChanged+=(s,e)=>RefreshChart();}
@@ -52,7 +56,8 @@ namespace MelloCharts {
       status.Dock=DockStyle.Fill;status.ForeColor=Color.FromArgb(67,97,111);status.TextAlign=ContentAlignment.MiddleLeft;footer.Controls.Add(status,0,0);
       apply.Text=target==null?"Inserir no slide":"Atualizar gráfico";apply.Dock=DockStyle.Fill;apply.BackColor=Color.FromArgb(36,79,115);apply.ForeColor=Color.White;apply.FlatStyle=FlatStyle.Flat;apply.FlatAppearance.BorderSize=0;apply.Click+=(s,e)=>ApplyChart();footer.Controls.Add(apply,1,0);
       Button close=new Button{Text="Fechar",Dock=DockStyle.Fill,FlatStyle=FlatStyle.Flat,BackColor=Color.White};close.FlatAppearance.BorderColor=Color.FromArgb(208,221,226);close.Click+=(s,e)=>Close();footer.Controls.Add(close,2,0);root.Controls.Add(footer,0,2);
-      foreach(TextBox box in new[]{title,subtitle,source,unit})box.TextChanged+=(s,e)=>RefreshChart();foreach(ComboBox combo in new[]{palette,decimals,style})combo.SelectedIndexChanged+=(s,e)=>RefreshChart();
+      foreach(TextBox box in new[]{title,subtitle,source,unit})box.TextChanged+=(s,e)=>RefreshChart();foreach(ComboBox combo in new[]{decimals,style})combo.SelectedIndexChanged+=(s,e)=>RefreshChart();
+      palette.SelectedIndexChanged+=(s,e)=>{if(!loading)customColors=null;UpdateColorButton();RefreshChart();};
       grid.CellValueChanged+=(s,e)=>RefreshChart();grid.RowsRemoved+=(s,e)=>RefreshChart();grid.CurrentCellDirtyStateChanged+=(s,e)=>{if(grid.IsCurrentCellDirty)grid.CommitEdit(DataGridViewDataErrorContexts.Commit);};grid.DataError+=(s,e)=>{e.ThrowException=false;SetStatus("Confira o tipo e os valores informados na tabela.",true);};
       grid.UserDeletingRow+=(s,e)=>{if(grid.Rows.Count<=1||(document.type=="waterfall"&&e.Row.Index==0)){e.Cancel=true;SetStatus("Mantenha pelo menos uma categoria e a base inicial da cascata.",true);}};
       LoadDocument();
@@ -82,12 +87,17 @@ namespace MelloCharts {
     private static void SideField(FlowLayoutPanel parent,string caption,Control input,int height){Panel panel=new Panel{Width=202,Height=height,Margin=new Padding(0,0,0,6)};Label label=new Label{Text=caption,Dock=DockStyle.Top,Height=20,ForeColor=Color.FromArgb(92,111,125)};input.Dock=DockStyle.Fill;panel.Controls.Add(input);panel.Controls.Add(label);parent.Controls.Add(panel);}
     private string SelectedPalette(){return palette.SelectedIndex==1?"forest":palette.SelectedIndex==2?"ink":"ocean";}
     private string SelectedStyle(){return style.SelectedIndex==1?"minimal":style.SelectedIndex==2?"dark":"executive";}
-    private void PresentationTo(ChartDocument d){d.title=title.Text;d.subtitle=subtitle.Text;d.source=source.Text;d.unit=unit.Text;d.palette=SelectedPalette();d.style=SelectedStyle();d.compactNumbers=compact.Checked;d.showGrid=gridLines.Checked;d.decimals=Math.Max(0,decimals.SelectedIndex);d.showLabels=labels.Checked;d.showBaseline=baseline.Checked;d.includeTotal=total.Checked;}
+    private void PresentationTo(ChartDocument d){d.customColors=ColorTools.Clone(customColors);d.title=title.Text;d.subtitle=subtitle.Text;d.source=source.Text;d.unit=unit.Text;d.palette=SelectedPalette();d.style=SelectedStyle();d.compactNumbers=compact.Checked;d.showGrid=gridLines.Checked;d.decimals=Math.Max(0,decimals.SelectedIndex);d.showLabels=labels.Checked;d.showBaseline=baseline.Checked;d.includeTotal=total.Checked;}
+    private void UpdateColorButton(){colorButton.Text=customColors==null?"Cores personalizadas…":"Cores personalizadas ✓";}
+    private void CustomizeColors(){
+      try{using(ChartColorForm form=new ChartColorForm(ReadEditor())){if(form.ShowDialog(this)==DialogResult.OK){customColors=ColorTools.Clone(form.Result);UpdateColorButton();RefreshChart();}}}
+      catch(Exception ex){SetStatus(ex.Message,true);}
+    }
     private static string TypeName(string type){return ChartCatalog.Get(type).Name;}
     private static void Tool(FlowLayoutPanel p,string text,Action action){Button b=new Button{Text=text,AutoSize=true,Height=31,Padding=new Padding(8,2,8,2),FlatStyle=FlatStyle.Flat,BackColor=Color.White,Margin=new Padding(0,3,8,0)};b.FlatAppearance.BorderColor=Color.FromArgb(208,221,226);b.Click+=(s,e)=>action();p.Controls.Add(b);}
     private void SetStatus(string text,bool error){status.Text=text;status.ForeColor=error?Color.FromArgb(164,73,48):Color.FromArgb(67,97,111);}
     private void LoadDocument(){
-      loading=true;ChartDefinition definition=ChartCatalog.Get(document.type);typeLabel.Text=TypeName(document.type).ToUpperInvariant();title.Text=document.title;title.MaxLength=80;subtitle.Text=document.subtitle;subtitle.MaxLength=110;source.Text=document.source;source.MaxLength=100;unit.Text=document.unit;unit.MaxLength=16;palette.SelectedIndex=document.palette=="forest"?1:document.palette=="ink"?2:0;decimals.SelectedIndex=document.decimals;style.SelectedIndex=document.style=="minimal"?1:document.style=="dark"?2:0;compact.Checked=document.compactNumbers;gridLines.Checked=document.showGrid;labels.Checked=document.showLabels;baseline.Checked=document.showBaseline;total.Checked=document.includeTotal;baseline.Visible=definition.Baseline;total.Visible=definition.Total;gridLines.Visible=document.type!="pie"&&document.type!="donut";
+      loading=true;customColors=ColorTools.Clone(document.customColors);UpdateColorButton();ChartDefinition definition=ChartCatalog.Get(document.type);typeLabel.Text=TypeName(document.type).ToUpperInvariant();title.Text=document.title;title.MaxLength=80;subtitle.Text=document.subtitle;subtitle.MaxLength=110;source.Text=document.source;source.MaxLength=100;unit.Text=document.unit;unit.MaxLength=16;palette.SelectedIndex=document.palette=="forest"?1:document.palette=="ink"?2:0;decimals.SelectedIndex=document.decimals;style.SelectedIndex=document.style=="minimal"?1:document.style=="dark"?2:0;compact.Checked=document.compactNumbers;gridLines.Checked=document.showGrid;labels.Checked=document.showLabels;baseline.Checked=document.showBaseline;total.Checked=document.includeTotal;baseline.Visible=definition.Baseline;total.Visible=definition.Total;gridLines.Visible=document.type!="pie"&&document.type!="donut";
       grid.Columns.Clear();grid.Rows.Clear();grid.Columns.Add("label","Categoria");grid.Columns[0].FillWeight=180;
       if(document.type=="waterfall"){
         grid.Columns.Add("value","Valor");DataGridViewComboBoxColumn kind=new DataGridViewComboBoxColumn{Name="kind",HeaderText="Tipo",DataSource=new[]{"base","delta","total"}};grid.Columns.Add(kind);

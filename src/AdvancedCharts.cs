@@ -9,12 +9,9 @@ namespace MelloCharts {
             public readonly Palette Palette;
             public readonly string Background, Ink, Muted, Grid, Axis, Band, ForecastLine;
             public ExecutiveTheme(ChartDocument d) {
-                bool dark=d.style=="dark";
-                Palette=Colors(d.palette,dark);
-                Background=dark?"#101E2E":"#FFFFFF"; Ink=dark?"#F3F6FB":"#20374D";
-                Muted=dark?"#A4B6C9":"#65798B"; Grid=dark?"#26384B":"#E9EFF3";
-                Axis=dark?"#526A82":"#AABAC7"; Band=dark?"#192D42":"#F1F6F9";
-                ForecastLine=dark?"#79C9BA":d.palette=="forest"?"#4C8D75":d.palette=="ink"?"#758DA5":"#478F84";
+                Palette=Colors(d);SurfaceColors surface=new SurfaceColors(d);
+                Background=surface.Background;Ink=surface.Ink;Muted=surface.Muted;Grid=surface.Grid;Axis=surface.Axis;Band=surface.Band;
+                ForecastLine=d.customColors!=null&&d.customColors.forecast!=null?d.customColors.forecast:DefaultForecastLine(d);
             }
         }
         sealed class ExecutiveScale {
@@ -78,7 +75,7 @@ namespace MelloCharts {
             AddRect(s,0,0,1280,720,t.Background,"background",-1);
             if(d.style!="minimal") {
                 AddRect(s,64,29,28,4,t.Palette.Actual,"accent",-1);
-                AddText(s,104,21,1000,24,ChartCatalog.Get(d.type).Name.ToUpperInvariant(),13,t.Palette.Actual,true,"left","eyebrow",-1);
+                AddText(s,104,21,1000,24,ChartCatalog.Get(d.type).Name.ToUpperInvariant(),13,ColorText(d,t.Palette.Actual,t.Background),true,"left","eyebrow",-1);
             }
             AddText(s,64,54,1152,78,Wrap(d.title,59),36,t.Ink,true,"left","title",-1);
             AddText(s,64,137,1152,34,Wrap(d.subtitle,100),18,t.Muted,false,"left","subtitle",-1);
@@ -178,7 +175,7 @@ namespace MelloCharts {
             }
             for(int i=0;i<ends.Count;i++) {
                 var e=ends[i];AddLine(s,x(n-1)+7,y(e.Item2),1080,positions[i]+19,e.Item3,1.3,false,"seriesLeader");
-                AddText(s,1088,positions[i],128,44,e.Item1+(d.showLabels?"\n"+ExecutiveValue(d,e.Item2,false):""),16,e.Item3,true,"left","seriesLabel",-1);
+                AddText(s,1088,positions[i],128,44,e.Item1+(d.showLabels?"\n"+ExecutiveValue(d,e.Item2,false):""),16,ColorText(d,e.Item3,t.Background),true,"left","seriesLabel",-1);
             }
             if(d.rows[0].actual>0 && n>1) {
                 double change=(d.rows[n-1].actual/d.rows[0].actual-1)*100;
@@ -224,7 +221,7 @@ namespace MelloCharts {
                             }
                         }
                         AddText(s,labelX,yy-2,94,Math.Max(h+4,17),ExecutiveValue(d,value,false),n>8?12:16,
-                            inside?(j==0?(d.style=="dark"?"#101E2E":"#FFFFFF"):(d.style=="dark"?"#FFFFFF":"#173E45")):t.Ink,true,value>=0?"right":"left","value",i);
+                            inside?FillInk(d,j==0?t.Palette.Actual:t.Palette.Forecast,j==0?(d.style=="dark"?"#101E2E":"#FFFFFF"):(d.style=="dark"?"#FFFFFF":"#173E45")):t.Ink,true,value>=0?"right":"left","value",i);
                     }
                 }
                 if(d.showBaseline)AddLine(s,x(row.baseline),cy-h-6,x(row.baseline),cy+h+6,t.Palette.Baseline,2.5,true,"baseline");
@@ -247,20 +244,25 @@ namespace MelloCharts {
                     AddRect(s,cx-w/2,bottom-actualHeight,w,actualHeight,t.Palette.Actual,"bar",i);
                     AddRect(s,cx-w/2,top,w,forecastHeight,t.Palette.Forecast,"bar",i);
                     if(d.showLabels) {
-                        if(actualHeight>40)AddText(s,cx-w/2+4,bottom-actualHeight/2-13,w-8,26,FormatNumber(fraction*100,0)+"%",17,d.style=="dark"?"#101E2E":"#FFFFFF",true,"center","percentValue",i);
-                        if(forecastHeight>40)AddText(s,cx-w/2+4,top+forecastHeight/2-13,w-8,26,FormatNumber((1-fraction)*100,0)+"%",17,d.style=="dark"?"#FFFFFF":"#173E45",true,"center","percentValue",i);
+                        if(actualHeight>40)AddText(s,cx-w/2+4,bottom-actualHeight/2-13,w-8,26,FormatNumber(fraction*100,0)+"%",17,FillInk(d,t.Palette.Actual,d.style=="dark"?"#101E2E":"#FFFFFF"),true,"center","percentValue",i);
+                        if(forecastHeight>40)AddText(s,cx-w/2+4,top+forecastHeight/2-13,w-8,26,FormatNumber((1-fraction)*100,0)+"%",17,FillInk(d,t.Palette.Forecast,d.style=="dark"?"#FFFFFF":"#173E45"),true,"center","percentValue",i);
                     }
                 } else AddText(s,cx-slot*.46,bottom-28,slot*.92,24,"Sem base",14,t.Muted,false,"center","empty",i);
                 AddText(s,cx-slot*.46,574,slot*.92,48,Wrap(row.label,Math.Max(6,(int)(slot/10))),n>8?14:17,t.Muted,false,"center","category",i);
             }
             AddText(s,112,628,1104,25,"Realizado + projetado restante = 100% da composição de cada categoria.",15,t.Muted,false,"left","insight",-1);
         }
-        static string[] SliceColors(ChartDocument d) {
+        static string[] BuiltinSliceColors(ChartDocument d) {
             string[] colors=d.palette=="forest"?new[]{"#286153","#66A899","#A7CBB1","#A86D40","#D6B784","#657F83"}:
                 d.palette=="ink"?new[]{"#3C4A63","#6E85A8","#A2B5D1","#A97869","#C7B3AC","#839FA2"}:
                 new[]{"#244F73","#3A8497","#72B9AF","#AFCEB5","#B2763E","#D4B58C"};
             if(d.style=="dark")colors=colors.Select(c=>Mix("#F3F6FB",c,.74)).ToArray();
             return colors.Concat(colors.Select(c=>Mix(d.style=="dark"?"#101E2E":"#FFFFFF",c,.62))).ToArray();
+        }
+        static string[] SliceColors(ChartDocument d) {
+            string[] colors=BuiltinSliceColors(d);
+            if(d.customColors!=null&&d.customColors.categories!=null)for(int i=0;i<d.customColors.categories.Count;i++)colors[i]=d.customColors.categories[i];
+            return colors;
         }
         static void CircularChart(Scene s,ChartDocument d,ExecutiveTheme t) {
             const double cx=340,cy=430,radius=172;double total=d.rows.Sum(r=>r.value),angle=-Math.PI/2;

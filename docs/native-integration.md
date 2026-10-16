@@ -3,7 +3,7 @@
 ## Instalar ou atualizar
 
 1. Salve os documentos e feche todas as janelas do PowerPoint.
-2. Abra `release/MelloCharts-Setup.exe` e confira a versão **0.6.0**.
+2. Abra `release/MelloCharts-Setup.exe` e confira a versão **0.7.0**.
 3. Clique em **Verificar** se quiser conferir a instalação atual. Essa opção só lê o estado local.
 4. Clique em **Instalar**. A atualização usa a mesma pasta e o mesmo usuário do Windows.
 5. Abra o PowerPoint desktop e procure a aba **Mello Charts**. Faça o primeiro ensaio em uma apresentação de teste.
@@ -17,6 +17,10 @@ Na aba Mello Charts, abra **Galeria de gráficos**, selecione um dos 11 modelos 
 **Inserir no slide** e **Atualizar gráfico** sempre usam esse destino de origem. Se outra apresentação estiver ativa, volte à original para aplicar. Se você excluir o slide ou fechar o arquivo original, salve seu JSON e abra um novo editor. O destino não é transferido automaticamente para outro arquivo.
 
 Há um editor por instância do suplemento. Abrir outro gráfico fecha o editor anterior, com confirmação se houver alterações não aplicadas nem salvas em JSON. O editor não altera a apresentação enquanto você apenas modifica a tabela ou a aparência.
+
+## Cores da sua marca
+
+Clique em **Cores personalizadas…** no painel do editor. Use o seletor ou informe HEX/RGB; confira a prévia e clique em **Inserir no slide** ou **Atualizar gráfico**. Veja o [guia de cores](custom-colors.md).
 
 ## Escolher o modelo
 
@@ -53,6 +57,6 @@ Se a aba não aparecer, veja **Arquivo → Opções → Suplementos → Gerencia
 
 ## Validação disponível
 
-O pacote passou por 183 verificações locais. A destruição da janela nativa foi reproduzida em uma janela invisível de teste, independente do Office. A ativação do suplemento instalado e o fluxo completo no PowerPoint real ainda não foram confirmados, conforme [Verificação](verification.md).
+O pacote passou por 203 verificações locais. A destruição da janela nativa foi reproduzida em uma janela invisível de teste, independente do Office. A ativação do suplemento instalado e o fluxo completo no PowerPoint real ainda não foram confirmados, conforme [Verificação](verification.md).
 
 Referências de API: [desfazer no PowerPoint](https://learn.microsoft.com/en-us/office/vba/api/powerpoint.application.startnewundoentry), [grupo pai de uma forma](https://learn.microsoft.com/en-us/office/vba/api/powerpoint.shape.parentgroup), [localização por ID do slide](https://learn.microsoft.com/en-us/office/vba/api/powerpoint.slides.findbyslideid) e [atualização da ribbon](https://learn.microsoft.com/en-us/office/vba/api/office.iribbonui.invalidate).

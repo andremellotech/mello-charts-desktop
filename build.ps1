@@ -10,7 +10,7 @@ if (-not (Test-Path $compilerPath)) { throw 'Instale ou habilite o .NET Framewor
 New-Item -ItemType Directory -Force -Path $buildRoot, $releaseRoot | Out-Null
 $references = @('/r:System.dll','/r:System.Core.dll','/r:System.Drawing.dll','/r:System.Windows.Forms.dll','/r:System.Web.Extensions.dll','/r:System.Xml.dll','/r:System.Xml.Linq.dll','/r:System.IO.Compression.dll','/r:System.IO.Compression.FileSystem.dll','/r:Microsoft.CSharp.dll')
 $libraryPath = Join-Path $buildRoot 'MelloCharts.AddIn.dll'
-$sources = @('src/ChartCore.cs','src/ChartCatalog.cs','src/AdvancedCharts.cs','src/ChartGalleryForm.cs','src/EditorForm.cs','src/PowerPointAddIn.cs','src/NativeIntegration.cs','src/InstallationHealth.cs') | ForEach-Object { Join-Path $projectRoot $_ }
+$sources = @('src/ChartCore.cs','src/ChartColors.cs','src/ChartColorForm.cs','src/ChartCatalog.cs','src/AdvancedCharts.cs','src/ChartGalleryForm.cs','src/EditorForm.cs','src/PowerPointAddIn.cs','src/NativeIntegration.cs','src/InstallationHealth.cs') | ForEach-Object { Join-Path $projectRoot $_ }
 & $compilerPath /nologo /target:library /platform:anycpu /optimize+ "/out:$libraryPath" $references "/resource:$(Join-Path $projectRoot 'assets/icon.png'),MelloCharts.Icon.png" $sources
 if ($LASTEXITCODE -ne 0) { throw 'Falha ao compilar o suplemento.' }
 $setupPath = Join-Path $releaseRoot 'MelloCharts-Setup.exe'
@@ -27,7 +27,7 @@ if ($RunTests) {
   if ($LASTEXITCODE -ne 0) { throw 'Falha ao compilar testes da ponte.' }
   & $bridgeTestPath
   if ($LASTEXITCODE -ne 0) { throw 'Testes da ponte falharam.' }
-  foreach ($catalogTestName in @('ExtendedChartTests','EditorCatalogTests')) {
+  foreach ($catalogTestName in @('ExtendedChartTests','EditorCatalogTests','ColorTests')) {
     $catalogTestPath = Join-Path $buildRoot ($catalogTestName + '.exe')
     $catalogTestSource = Join-Path $projectRoot ('tests/' + $catalogTestName + '.cs')
     & $compilerPath /nologo /target:exe /platform:anycpu "/out:$catalogTestPath" $references "/r:$libraryPath" $catalogTestSource
@@ -47,6 +47,11 @@ if ($RenderGallery) {
   if ($LASTEXITCODE -ne 0) { throw 'Falha ao compilar a galeria.' }
   & $galleryToolPath (Join-Path $projectRoot 'examples/gallery')
   if ($LASTEXITCODE -ne 0) { throw 'Falha ao renderizar a galeria.' }
+  $colorRenderPath = Join-Path $buildRoot 'RenderColors.exe'
+  & $compilerPath /nologo /target:exe /platform:anycpu "/out:$colorRenderPath" $references "/r:$libraryPath" (Join-Path $projectRoot 'tests/RenderColors.cs')
+  if ($LASTEXITCODE -ne 0) { throw 'Falha ao compilar os exemplos de cores.' }
+  & $colorRenderPath (Join-Path $projectRoot 'examples/gallery')
+  if ($LASTEXITCODE -ne 0) { throw 'Falha ao renderizar os exemplos de cores.' }
 }
 $setupHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $setupPath).Hash.ToLowerInvariant()
 [IO.File]::WriteAllText((Join-Path $releaseRoot 'SHA256SUMS.txt'), "$setupHash  MelloCharts-Setup.exe`n", [Text.Encoding]::ASCII)

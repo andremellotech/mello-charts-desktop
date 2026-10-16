@@ -6,7 +6,7 @@ Suplemento gratuito para criar gráficos executivos no **PowerPoint para Windows
 
 ![Galeria dos 11 modelos Mello Charts](examples/gallery/catalogo.png)
 
-**Versão 0.6.0 experimental.** Passou por 183 verificações locais. A ativação do suplemento instalado e o fluxo completo dentro do PowerPoint real ainda precisam ser validados. O instalador não tem assinatura digital comercial. Veja [o que foi verificado e o que falta](docs/verification.md).
+**Versão 0.7.0 experimental.** Agora inclui cores personalizadas por HEX/RGB. Passou por 203 verificações locais. A ativação do suplemento instalado e o fluxo completo dentro do PowerPoint real ainda precisam ser validados. O instalador não tem assinatura digital comercial. Veja [o que foi verificado e o que falta](docs/verification.md).
 
 ## O que você pode criar
 
@@ -22,6 +22,8 @@ Suplemento gratuito para criar gráficos executivos no **PowerPoint para Windows
 | Empilhado 100% | Realizado + projetado restante normalizados por categoria. Parcelas não negativas. |
 | Pizza / Rosca | Composição de uma série não negativa com total positivo. A rosca mostra o total no centro. |
 | Pareto | Barras ordenadas por valor, curva acumulada e referência em 80%. Preserva a ordem da tabela no projeto. |
+
+[Veja um exemplo com cores personalizadas](examples/gallery/cores-personalizadas.png).
 
 No build-up, **EAC = realizado + projetado restante**. O baseline é uma referência e não entra na soma. Todos os exemplos deste repositório usam dados fictícios.
 
@@ -45,6 +47,7 @@ Se a instalação for bloqueada por uma política da organização, use o proced
 - **Duplicar gráfico:** cria uma cópia nativa com identidade própria, preservando ajustes feitos no PowerPoint.
 - **Ajustar ao slide:** centraliza o grupo, mantém a proporção 16:9 e remove a rotação.
 - **Aparência:** escolha Executivo, Essencial ou Escuro e uma das três paletas.
+- **Qualquer cor RGB:** use **Cores personalizadas…** para definir séries, fundo e fatias por seletor, HEX ou RGB, com contraste automático dos valores. [Como usar](docs/custom-colors.md).
 - **Exportar e recuperar:** salve PNG em 1920 × 1080, projeto JSON ou tabela CSV. Use o último rascunho válido quando disponível.
 - **Diagnóstico:** confira arquivos e registros próprios sem alterar a instalação ou ler o conteúdo das apresentações.
 
@@ -86,7 +89,7 @@ No Windows, com o .NET Framework instalado, execute na raiz:
 ./build.ps1 -RunTests -RenderGallery
 ```
 
-Não há dependências NuGet. O comando compila a DLL, o instalador e executa **52 testes do núcleo, 38 verificações da ponte, 45 dos novos gráficos, 27 do editor/galeria e 21 de integração**. Também gera as prévias e o SHA-256 do instalador. Não instala nem registra o suplemento e não abre o PowerPoint. Alguns testes criam janelas nativas invisíveis e rascunhos temporários.
+Não há dependências NuGet. O comando compila a DLL, o instalador e executa **52 testes do núcleo, 38 verificações da ponte, 45 dos novos gráficos, 27 do editor/galeria, 20 de cores e 21 de integração**. Também gera as prévias e o SHA-256 do instalador. Não instala nem registra o suplemento e não abre o PowerPoint. Alguns testes criam janelas nativas invisíveis e rascunhos temporários.
 
 O workflow em **Actions** compila e testa no Windows. Os instaladores produzidos no CI são artefatos experimentais, sem assinatura digital. O ensaio real no Office é separado e está descrito em [Verificação](docs/verification.md).
 
