@@ -1,0 +1,18 @@
+# Generated build outputs
+build/
+dist/
+*.pdb
+*.user
+*.suo
+.vs/
+TestResults/
+# Local editor and OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+# Local credentials and signing material
+.env
+.env.*
+*.pfx
+*.p12

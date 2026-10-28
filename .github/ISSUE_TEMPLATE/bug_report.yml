@@ -1,0 +1,35 @@
+name: Relatar problema
+description: Informe um problema do suplemento com passos para reproduzir.
+title: "[Bug] "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: O que aconteceu?
+      description: Descreva o problema e o que você esperava ver.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passos para reproduzir
+      description: Use um exemplo fictício, sem arquivos ou dados de empresas.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versão do Mello Charts
+      placeholder: "0.7.0"
+    validations:
+      required: true
+  - type: input
+    id: office
+    attributes:
+      label: Windows e PowerPoint
+      description: Informe versão e arquitetura de 32 ou 64 bits quando souber.
+  - type: textarea
+    id: diagnostic
+    attributes:
+      label: Mensagem de erro ou diagnóstico
+      description: Revise qualquer texto ou imagem antes de publicar.

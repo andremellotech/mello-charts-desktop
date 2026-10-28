@@ -1,0 +1,2 @@
+ecd76d08272f906a007dcbc86ce8b34c2abb58b0ecd50dd6f4da8cbd5adfcdb8  MelloCharts-Setup.exe
+2e4b79e666ef0c58dc90f0d5bc2003aca581c67015e348011d4afdd5a2da3d96  MelloCharts-Portable.zip

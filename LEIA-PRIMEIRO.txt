@@ -1,0 +1,35 @@
+MELLO CHARTS 0.8.0 — WINDOWS — VERSÃO EXPERIMENTAL
+
+INSTALAR AS ABAS DO OFFICE
+Salve seus arquivos, feche Excel e PowerPoint e execute MelloCharts-Setup.exe.
+Use Instalar. Reabra os aplicativos e procure a aba Mello Charts.
+Instalação por usuário; não altera políticas de segurança do Office.
+
+EDITOR PORTÁTIL
+Extraia todo o ZIP numa pasta. Abra MelloCharts.exe junto à DLL.
+Escolha um dos 14 modelos, importe ou cole dados e personalize o gráfico.
+Pode exportar PNG/CSV/JSON sem registrar abas.
+Enviar ao PowerPoint exige o aplicativo instalado e cria uma apresentação nova.
+
+NO EXCEL
+Selecione tabela contínua com cabeçalhos e use Criar da seleção.
+NO POWERPOINT
+Selecione slide, abra Galeria de gráficos, revise e use Inserir no slide.
+Para editar depois, selecione o grupo e use Editar dados.
+
+VINCULAR EXCEL
+Escolha XLSX local, aba e intervalo incluindo cabeçalho.
+Salve alterações no Excel antes de Atualizar dados e aplicar ao slide.
+Não há leitura contínua em segundo plano nem recálculo de fórmulas.
+
+14 modelos: build-up, cascata, colunas, barras, linhas, área, combinado,
+empilhado 100%, pizza, rosca, Pareto, Gantt, dispersão e bolhas.
+Desfazer/Refazer: Ctrl+Z/Ctrl+Y. SalvarJSON: Ctrl+S.
+
+Windows 10/11 Intel/AMD; .NET Framework 4.8; integração Office desktop 32/64 bits.
+Testado por COM no Office 16.0.20527.20088 com documentos novos.
+Instalação/ativação das abas ainda exigem aceitação no destino.
+Executáveis sem assinatura digital comercial; siga as regras da TI.
+
+Código, exemplos e documentação:
+https://github.com/andremellotech/mello-charts-desktop
