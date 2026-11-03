@@ -1,5 +1,12 @@
 # Histórico
 
+## Distribuição compacta — 03/11/2026
+
+- 56 exemplos reunidos em ZIP com manifesto SHA-256 e extração sem sobrescrever edições.
+- Guias e notas consolidados sem perda de texto; instalador e editor portátil preservados.
+- Build e CI verificam o pacote antes de compilar e testar.
+
+
 ## 0.8.0 experimental — 28/10/2026
 
 - Gantt, dispersão e bolhas:14 modelos, datas inclusivas, progresso, coordenadas negativas e área proporcional.

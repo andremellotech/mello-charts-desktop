@@ -4,9 +4,9 @@
 
 Aplicativo desktop e suplemento para Windows, desenvolvido em C# com .NET Framework 4.8. Versão **0.8.0 experimental**.
 
-**[Baixar instalador](https://github.com/andremellotech/mello-charts-desktop/raw/refs/heads/main/release/MelloCharts-Setup.exe)** · **[Editor portátil](https://github.com/andremellotech/mello-charts-desktop/raw/refs/heads/main/release/MelloCharts-Portable.zip)** · [Instalação](docs/install-guide.md) · [Guia do editor](docs/native-integration.md) · [Exemplos](examples/gallery/README.md)
+**[Baixar instalador](https://github.com/andremellotech/mello-charts-desktop/raw/refs/heads/main/release/MelloCharts-Setup.exe)** · **[Editor portátil](https://github.com/andremellotech/mello-charts-desktop/raw/refs/heads/main/release/MelloCharts-Portable.zip)** · [Instalação](docs/reference.md#install-guide) · [Guia do editor](docs/reference.md#native-integration) · [Exemplos](examples/MelloCharts-Examples.zip)
 
-![Editor Mello Charts com cronograma Gantt](examples/gallery/editor-gantt.png)
+![Editor Mello Charts com cronograma Gantt](https://raw.githubusercontent.com/andremellotech/mello-charts-desktop/5975c40c24b338e2be658e698eafcf82982c4217/examples/gallery/editor-gantt.png)
 
 ## Criar, revisar, apresentar
 
@@ -39,7 +39,7 @@ O instalador registra as abas no Excel e no PowerPoint para o usuário atual. Sa
 | Planejar atividades | Gantt com início, fim e progresso |
 | Relacionar indicadores | Dispersão e bolhas com área proporcional |
 
-![Catálogo dos 14 modelos](examples/gallery/catalogo.png)
+![Catálogo dos 14 modelos](https://raw.githubusercontent.com/andremellotech/mello-charts-desktop/5975c40c24b338e2be658e698eafcf82982c4217/examples/gallery/catalogo.png)
 
 ## Dados e vínculos
 
@@ -68,9 +68,20 @@ Limites: 12 categorias nos modelos anteriores, 24 atividades no Gantt e 80 ponto
 
 ## Validação
 
-Em 28/10/2026: 273 verificações automatizadas e renderização local aprovadas; teste COM no PowerPoint Microsoft 365 16.0.20527.20088 criou, atualizou e salvou os 14 modelos, preservando dados, tamanho, posição e rotação. Teste Excel da mesma versão confirmou segunda aba, intervalo H500:K502, fórmulas, atualização salva, datas 1904 e percentuais. [Evidências e limites](docs/verification.md).
+Em 28/10/2026: 273 verificações automatizadas e renderização local aprovadas; teste COM no PowerPoint Microsoft 365 16.0.20527.20088 criou, atualizou e salvou os 14 modelos, preservando dados, tamanho, posição e rotação. Teste Excel da mesma versão confirmou segunda aba, intervalo H500:K502, fórmulas, atualização salva, datas 1904 e percentuais. [Evidências e limites](docs/reference.md#verification).
 
 A instalação e a ativação das abas pelo instalador ainda precisam de aceitação no computador de destino. A integração COM foi testada diretamente; isso não comprova as políticas ou a instalação de cada organização.
+
+## Exemplos e documentação compactados
+
+Os 56 exemplos originais (projetos JSON, tabelas CSV, PNGs e galeria) estão em **[MelloCharts-Examples.zip](examples/MelloCharts-Examples.zip)**, preservando todos os caminhos e bytes publicados. Para abrir os mesmos arquivos localmente:
+
+```powershell
+./examples.ps1          # restaura examples/ sem sobrescrever edições
+./examples.ps1 -Verify  # confere manifesto, tamanhos e SHA-256
+```
+
+O [guia consolidado](docs/reference.md) conserva os textos completos de instalação, operação, cores, publicação, validação e notas de versões. As imagens acima usam URLs imutáveis da versão anterior. As fontes C#, os testes e os três arquivos de distribuição permanecem separados e utilizáveis; não há site Pages neste projeto.
 
 ## Desenvolvimento
 

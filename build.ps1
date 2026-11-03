@@ -1,5 +1,7 @@
 ﻿param([switch]$RunTests,[switch]$RenderGallery)
 $ErrorActionPreference = 'Stop'
+& (Join-Path $PSScriptRoot 'examples.ps1') -Verify
+if ($RunTests) { & (Join-Path $PSScriptRoot 'tests/ExamplePackageTests.ps1') }
 $projectRoot = $PSScriptRoot
 $buildRoot = Join-Path $projectRoot 'build'
 $releaseRoot = Join-Path $projectRoot 'release'

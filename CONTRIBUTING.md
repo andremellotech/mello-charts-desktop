@@ -23,10 +23,10 @@ Não inclua `build/`, rascunhos pessoais, certificados, credenciais, binários d
 
 ## Testar no Office
 
-O ensaio `test-office.ps1` é opcional e ativa o PowerPoint por COM para criar uma apresentação separada. Leia [Verificação](docs/verification.md) antes de executar. Use apresentações de teste e respeite as permissões da organização.
+O ensaio `test-office.ps1` é opcional e ativa o PowerPoint por COM para criar uma apresentação separada. Leia [Verificação](https://github.com/andremellotech/mello-charts-desktop/blob/5975c40c24b338e2be658e698eafcf82982c4217/docs/verification.md) antes de executar. Use apresentações de teste e respeite as permissões da organização.
 
 ## Publicar uma versão
 
-Atualize as versões da DLL e do instalador juntas, rode o build e confira o payload embutido. Publique o EXE e `SHA256SUMS.txt` como ativos da Release. Veja [Publicação](docs/publish-guide.md).
+Atualize as versões da DLL e do instalador juntas, rode o build e confira o payload embutido. Publique o EXE e `SHA256SUMS.txt` como ativos da Release. Veja [Publicação](https://github.com/andremellotech/mello-charts-desktop/blob/5975c40c24b338e2be658e698eafcf82982c4217/docs/publish-guide.md).
 
 Contribuições são distribuídas sob a [licença MIT](LICENSE) do projeto.

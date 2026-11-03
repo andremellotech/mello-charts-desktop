@@ -16,3 +16,7 @@ desktop.ini
 .env.*
 *.pfx
 *.p12
+
+# Examples restored from the canonical archive or regenerated for QA
+examples/*
+!examples/MelloCharts-Examples.zip
